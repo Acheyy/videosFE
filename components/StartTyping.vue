@@ -29,9 +29,10 @@
 .custom-wrapperr {
   text-align: center;
   margin-top: 70px;
-  margin-right: 90px
+  margin-right: 90px;
 }
 .back span {
+    cursor: default;
   font-size: 3em;
   color: #ffffff;
   display: table-cell;
@@ -39,7 +40,12 @@
   line-height: 80px;
   animation: jumb 1s infinite;
   border-radius: 8px;
-
+  transition-duration: 0.1s;
+  transition-timing-function: ease-in-out;
+  &:hover {
+    background-color: #ffffff;
+    color: #000000;
+  }
 }
 @keyframes jumb {
   0% {

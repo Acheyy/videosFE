@@ -1,8 +1,7 @@
 <template>
   <Loading v-if="pending"></Loading>
   <div v-else>
-    <h1 class="page-title">All Actors</h1>
-    {{ actorsData }}
+    <h1 class="page-title">All Tags</h1>
 
     <div class="cards-wrapper">
       <NuxtLink
@@ -28,7 +27,7 @@
 
 <script setup>
 const { pending, data: actorsData } = await useLazyFetch(
-  "http://localhost:3030/tags ",
+  `http://localhost:3030/api/tags `,
   {
     onResponseError() {
       toast("There was an error! Click here to refresh the data!", {

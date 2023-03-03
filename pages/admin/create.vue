@@ -15,8 +15,8 @@
       :value="nameInput"
       @keyup="handleNameInput($event)"
     />
+    Category:
     <div class="margin">
-      Category:
       <template v-for="(category, index) in categories" :key="index">
         <input
           type="radio"
@@ -115,16 +115,16 @@ async function submitVideo() {
   formData.append("actor", actorId.value);
   formData.append("video", files.value[0]);
   console.log(formData.values);
-  await $fetch("http://localhost:3030/videos", {
+  await $fetch(`http://localhost:3030/api/videos`, {
     method: "POST",
     body: formData,
   });
 }
 const { data: categories } = await useFetch(
-  "http://localhost:3030/categories "
+  `http://localhost:3030/api/categories `
 );
-const { data: tagsData } = await useFetch("http://localhost:3030/tags ");
-const { data: actorsData } = await useFetch("http://localhost:3030/actors ");
+const { data: tagsData } = await useFetch(`http://localhost:3030/api/tags `);
+const { data: actorsData } = await useFetch(`http://localhost:3030/api/actors `);
 </script>
 
 <style scoped lang="scss">

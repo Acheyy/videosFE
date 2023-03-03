@@ -12,11 +12,11 @@
       </div>
       <span>All Videos</span>
     </NuxtLink>
-    <NuxtLink to="/all-actors" class="link">
+    <NuxtLink to="/all-girls" class="link">
       <div class="icon">
         <IconsAvatar></IconsAvatar>
       </div>
-      <span>All Actors</span>
+      <span>All Girls</span>
     </NuxtLink>
     <NuxtLink to="/all-tags" class="link">
       <div class="icon">

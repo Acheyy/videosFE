@@ -3,6 +3,10 @@
     <Header> </Header>
     <Sidebar></Sidebar>
     <div class="main-content"  :class="{ full: !showSidebar }">
+      <div class="website-message">
+        !! Website is being built..  <br>
+        Some functionalities might not work properly
+      </div>
       <slot></slot>
     </div>
   </div>
@@ -34,5 +38,13 @@ const { showSidebar } = storeToRefs(sidebarStore);
   &.full{
     margin-left: 0 !important;
   }
+}
+
+.website-message {
+  margin:  0 auto;
+  text-align: center;
+  font-size: 18px;
+  color: red;
+  padding: 10px;
 }
 </style>

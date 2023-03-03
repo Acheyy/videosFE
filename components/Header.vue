@@ -9,8 +9,9 @@
       </NuxtLink>
     </div>
     <div class="center">
-      <form>
+      <form style="position: relative">
         <div class="search-container">
+          <IconsSearchSecond></IconsSearchSecond>
           <input
             id="search"
             autocapitalize="none"
@@ -44,9 +45,10 @@
       </button>
     </div>
     <div class="end">
-      <NuxtLink to="/admin/create" class="upload-icon">
+      <!-- <NuxtLink to="/admin/create" class="upload-icon">
         <IconsAddVideo></IconsAddVideo>
-      </NuxtLink>
+      </NuxtLink> -->
+      <AccountInfo></AccountInfo>
     </div>
   </div>
 </template>
@@ -54,15 +56,36 @@
 <script setup>
 import { useSearchStore } from "~/store/search";
 import { useSidebarStore } from "~/store/sidebar";
+import { useAccountInfo } from "~/store/accountInfo";
 import { storeToRefs } from "pinia";
+const token = useCookie("token");
+
 const router = useRouter();
 const route = useRoute();
 
 const sidebarStore = useSidebarStore();
-const { showSidebar } = storeToRefs(sidebarStore);
 const searchStore = useSearchStore();
-const { searchText } = storeToRefs(searchStore);
+const accountInfoStore = useAccountInfo();
+const { accountDetails } = storeToRefs(accountInfoStore);
 let searchInput = ref("");
+
+
+if (token.value) {
+  await useLazyFetch(`http://localhost:3030/api/users/getInfo`, {
+    server: false,
+    credentials: "include",
+
+    onResponse(res) {
+      accountInfoStore.updateAccountInfo(res.response._data.userDB);
+      accountInfoStore.triggerAccountLogin(true);
+    },
+    onResponseError(err) {
+      if ((err.response._data.error = "Forbidden")) {
+        accountInfoStore.triggerAccountLogin(false);
+      }
+    },
+  });
+}
 
 function debounce(func, timeout = 750) {
   let timer;
@@ -76,7 +99,7 @@ function debounce(func, timeout = 750) {
 
 async function searchFunction(event) {
   await fetch(
-    `http://localhost:3030/videos/search?searchText=${event.target.value}`
+    `http://localhost:3030/api/videos/search?searchText=${event.target.value}`
   )
     .then((response) => response.json())
     .then((data) => {
@@ -87,29 +110,24 @@ async function searchFunction(event) {
 
 const processChanges = debounce((event) => searchFunction(event));
 
-// const handleSearchTyping = async (event) => {
-//   await fetch(
-//     `http://localhost:3030/videos/search?searchText=${event.target.value}`
-//   )
-//     .then((response) => response.json())
-//     .then((data) => searchStore.triggerSearch([...data], event.target.value));
-
-//   // searchStore.triggerSearch([{ name: "stiri" }], event.target.value);
-// };
-
 const handleSearchClick = async (event) => {
   if (route.path !== "/search") {
     router.push({ path: `/search` });
-    await fetch(
-      `http://localhost:3030/videos/search?searchText=${
-        event.target.value.length ? event.target.value : " "
-      }`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        searchStore.triggerSearch(data, event.target.value);
-        searchStore.triggerSearching(false);
-      });
+    if (event.target.value.length) {
+      await fetch(
+        `http://localhost:3030/api/videos/search?searchText=${
+          event.target.value.length ? event.target.value : " "
+        }`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          searchStore.triggerSearch(data, event.target.value);
+          searchStore.triggerSearching(false);
+        });
+    } else {
+      searchStore.triggerSearch([], "");
+      searchStore.triggerSearching(false);
+    }
   }
 };
 
@@ -153,10 +171,11 @@ const submitSearch = () => {
   align-items: center;
   justify-content: space-between;
   padding: 0 16px;
-
+  color: #fff;
   .logo {
     width: 100px;
     padding: 18px 14px 18px 16px;
+    display: flex;
     cursor: pointer;
 
     svg {
@@ -217,11 +236,12 @@ const submitSearch = () => {
     display: flexbox;
     display: flex;
     flex-direction: row;
+    width: 500px;
 
     .search-container {
       border-radius: 40px 0 0 40px;
       caret-color: var(--yt-spec-text-primary);
-      margin-left: 32px;
+      margin-left: 0;
       padding: 0px 4px 0px 16px;
       position: relative;
       align-items: center;
@@ -232,7 +252,6 @@ const submitSearch = () => {
       box-shadow: inset 0 1px 2px hsla(0, 0%, 0%, 0);
       color: hsla(0, 100%, 100%, 0.88);
       padding: 2px 6px;
-      margin-left: 34px;
       flex: 1;
       flex-basis: 1e-9px;
       display: flexbox;

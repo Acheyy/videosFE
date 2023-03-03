@@ -10,11 +10,11 @@ export const useSearchStore = defineStore({
     };
   },
   actions: {
-    async triggerSearch(videos, text) {
+    async triggerSearch(videos: any, text: string) {
       this.resultVideos = videos;
       this.searchText = text;
     },
-    async triggerSearching(isSearching) {
+    async triggerSearching(isSearching: boolean) {
       this.searching = isSearching;
     },
   },

@@ -12,8 +12,7 @@ p,
 a,
 div,
 * {
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica,
-    Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+    font-family: "Roboto","Arial",sans-serif;
 }
 
 h1 {
@@ -34,17 +33,4 @@ h1 {
     rgba(18, 18, 18, 1) 0%,
     rgb(36 22 22) 100%
   );
-}
-
-.card-wrapper {
-  border-radius: 8px;
-  overflow: hidden;
-  transition-duration: 0.1s;
-  transition-timing-function: ease-in-out;
-  &:hover {
-    background-color: #272727;
-  }
-  .text {
-    padding: 4px 6px;
-  }
 }

@@ -4,7 +4,8 @@ export default defineNuxtConfig({
     css: {
       preprocessorOptions: {
         scss: {
-          additionalData: '@use "@/assets/css/_colors.scss" as *; @use "vue3-toastify/dist/index.css" as *;',
+          additionalData:
+            '@use "@/assets/css/_colors.scss" as *; @use "vue3-toastify/dist/index.css" as *;',
         },
       },
     },
