@@ -1,28 +1,46 @@
 <template>
   <div class="sidebar-main-wrapper" :class="{ active: showSidebar }">
-    <NuxtLink to="/" class="link">
+    <NuxtLink to="/" class="link" @click="closeSidebarMobile()">
       <div class="icon">
         <IconsHome></IconsHome>
       </div>
       <span>Home</span>
     </NuxtLink>
-    <NuxtLink to="/all-videos" class="link">
+    <NuxtLink to="/all-videos" class="link" @click="closeSidebarMobile()">
       <div class="icon">
         <AllVideos></AllVideos>
       </div>
       <span>All Videos</span>
     </NuxtLink>
-    <NuxtLink to="/all-girls" class="link">
+    <NuxtLink to="/all-girls" class="link" @click="closeSidebarMobile()">
       <div class="icon">
         <IconsAvatar></IconsAvatar>
       </div>
       <span>All Girls</span>
     </NuxtLink>
-    <NuxtLink to="/all-tags" class="link">
+    <NuxtLink to="/all-categories" class="link" @click="closeSidebarMobile()">
+      <div class="icon">
+        <IconsTag></IconsTag>
+      </div>
+      <span>All Categories</span>
+    </NuxtLink>
+    <NuxtLink to="https://discord.gg/gCcUVYAaNE" target="_blank" class="link" @click="closeSidebarMobile()">
+      <div class="icon">
+        <IconsDiscord></IconsDiscord>
+      </div>
+      <span>Discord</span>
+    </NuxtLink>
+    <!-- <NuxtLink to="/all-tags" class="link" @click="closeSidebarMobile()">
       <div class="icon">
         <IconsTag></IconsTag>
       </div>
       <span>All Tags</span>
+    </NuxtLink> -->
+    <NuxtLink to="/contact" class="link" @click="closeSidebarMobile()">
+      <div class="icon">
+        <!-- <IconsTag></IconsTag> -->
+      </div>
+      <span>Contact</span>
     </NuxtLink>
   </div>
 </template>
@@ -35,17 +53,29 @@ import AllVideos from "./icons/AllVideos.vue";
 const sidebarStore = useSidebarStore();
 
 const { showSidebar } = storeToRefs(sidebarStore);
+
+onMounted(() => {
+  if (window?.innerWidth < 1500) {
+    sidebarStore.triggerSidebar();
+  }
+});
+
+function closeSidebarMobile() {
+  if (window?.innerWidth < 1500) {
+    sidebarStore.triggerSidebar();
+  }
+}
 </script>
 
 <style scoped lang="scss">
 .sidebar-main-wrapper {
   display: flex;
   flex-direction: column;
-  width: 216px;
+  width: 276px;
   height: calc(100vh - 90px);
   position: fixed;
-  top: 57.61px;
-  left: -240px;
+  top: 66px;
+  left: -300px;
   padding: 12px;
   color: #ffffff;
   overflow: hidden;
@@ -54,7 +84,8 @@ const { showSidebar } = storeToRefs(sidebarStore);
   scrollbar-width: thin;
   transition-duration: 0.1s;
   transition-timing-function: ease-in-out;
-
+  z-index: 9;
+  background-color: #0f0f0f;
   &.active {
     left: 0;
   }

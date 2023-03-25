@@ -71,6 +71,8 @@
 </template>
 
 <script setup>
+import { toast } from "vue3-toastify";
+
 const files = ref([]);
 let nameInput = ref("");
 let category = ref("");
@@ -83,7 +85,7 @@ let tagIds = ref([]);
 const handleFileSelection = (event) => {
   let uploadedFiles = event.target.files;
   files.value = uploadedFiles;
-  nameInput.value = files.value[0].name;
+  nameInput.value = files.value[0].name.split('.').slice(0, -1).join('.');
 };
 const handleNameInput = (event) => {
   nameInput.value = event.target.value;
@@ -108,7 +110,7 @@ const handleTagSelect = (event, ID) => {
 };
 async function submitVideo() {
   let formData = new FormData();
-  console.log("tagIds.value", tagIds.value)
+  console.log("tagIds.value", tagIds.value);
   formData.append("name", nameInput.value);
   formData.append("category", categoryId.value);
   formData.append("tags[]", tagIds.value);
@@ -118,13 +120,24 @@ async function submitVideo() {
   await $fetch(`http://localhost:3030/api/videos`, {
     method: "POST",
     body: formData,
+    onResponse() {
+      toast("Video Added!", {
+        theme: "dark",
+        type: "success",
+        autoClose: true,
+        toastClassName: "custom-wrapper error",
+        closeOnClick: true,
+      });
+    },
   });
 }
 const { data: categories } = await useFetch(
   `http://localhost:3030/api/categories `
 );
 const { data: tagsData } = await useFetch(`http://localhost:3030/api/tags `);
-const { data: actorsData } = await useFetch(`http://localhost:3030/api/actors `);
+const { data: actorsData } = await useFetch(
+  `http://localhost:3030/api/actors `
+);
 </script>
 
 <style scoped lang="scss">

@@ -11,7 +11,6 @@
     <div class="center">
       <form style="position: relative">
         <div class="search-container">
-          <IconsSearchSecond></IconsSearchSecond>
           <input
             id="search"
             autocapitalize="none"
@@ -204,7 +203,6 @@ const submitSearch = () => {
   display: flex;
   flex-direction: row;
   align-items: center;
-  flex: 0 1 728px;
   min-width: 0px;
 
   button {

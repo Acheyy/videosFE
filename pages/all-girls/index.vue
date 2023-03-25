@@ -2,9 +2,9 @@
   <Loading v-if="pending"></Loading>
   <div v-else>
     <h1 class="page-title">All Girls</h1>
-    <div class="cards-wrapper">
+    <div class="girls-wrapper">
       <NuxtLink
-        :to="'/all-girls/bj/' + actor.slug"
+        :to="'/all-girls/' + actor.slug"
         class="card-wrapper"
         v-for="(actor) in actorsData"
       >
@@ -28,6 +28,23 @@
 <script setup>
 import { toast } from "vue3-toastify";
 
+useHead({
+  title: "Watch All Girls The Best Korean BJ Cam Girl Videos Online In High Quality - Skbj.TV",
+  meta: [
+      { charset: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { hid: "description", name: "description", content: "Watch The Best Korean BJ Cam Girl Videos Online In High Quality" },
+      { name: "format-detection", content: "telephone=no" },
+      { name: "referrer", content: "unsafe-url" },
+      { property: "og:locale", content: "en_US" },
+      { property: "og:title", content: "Skbj.TV" },
+      { property: "og:site_name", content: "Skbj.TV" },
+      { property: "og:description", content: "Skbj.TV Official Page - Watch The Best Korean BJ Cam Girl Videos Online In High Quality" },
+      { name: "twitter:title", content: "Skbj.TV" },
+      { name: "twitter:description", content: "Skbj.TV Official Page - Watch The Best Korean BJ Cam Girl Videos Online In High Quality" },
+    ],
+})
+
 const { pending, data: actorsData } = await useLazyFetch(
   `http://localhost:3030/api/actors`,
   {
@@ -40,37 +57,45 @@ const { pending, data: actorsData } = await useLazyFetch(
         closeOnClick: false,
       });
     },
-    server: false,
+    server: true,
   }
 );
 </script>
 
 <style scoped lang="scss">
-.cards-wrapper {
+.girls-wrapper {
   display: flex;
   flex-wrap: wrap;
   .card-wrapper {
     width: calc(16.666666% - 16px);
     margin: 8px;
+    border-radius: 8px;
+    overflow: hidden;
     .thumnail img {
       width: 100%;
     }
-  }
-}
-.pagination {
-  display: flex;
-  justify-content: center;
-
-  .page-number {
-    border: 1px solid #858585;
-    padding: 7px 15px;
-    border-radius: 3px;
-    margin: 5px;
-    display: inline-block;
   }
 }
 .title {
   margin-top: 8px;
   text-transform: capitalize;
 }
+
+@media only screen and (max-width: 992px) {
+  .girls-wrapper .card-wrapper {
+    width: calc(20% - 16px);
+    margin: 8px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+}
+@media only screen and (max-width: 660px) {
+  .girls-wrapper .card-wrapper {
+    width: calc(33.33333% - 16px);
+    margin: 8px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+}
+
 </style>

@@ -25,6 +25,7 @@ const props = defineProps({
   display: flex;
   justify-content: center;
   margin-top: 30px;
+  flex-wrap: wrap;
 
   .page-number {
     border: 1px solid #858585;

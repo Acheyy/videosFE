@@ -1,10 +1,25 @@
 <template>
-  <Loading v-if="pending || pendingRandom"></Loading>
+  <Loading v-if="pending || pendingRandom || pendingFantrie"></Loading>
   <div v-else>
     <div class="cards-title">Most Recent:</div>
     <div class="cards-wrapper">
       <VideoCard
         v-for="(video, index) in videos.videos"
+        :key="index"
+        :uploadID="video.uploadID"
+        :thumbnail="video.thumbnail"
+        :duration="video.duration"
+        :name="video.name"
+        :date="video.createdAt"
+        :actor="video.actor"
+        :category="video.category"
+        :views="video.views"
+      ></VideoCard>
+    </div>
+    <div class="cards-title margin-top">Fantrie:</div>
+    <div class="cards-wrapper">
+      <VideoCard
+        v-for="(video, index) in videosFantrie.videos"
         :key="index"
         :uploadID="video.uploadID"
         :thumbnail="video.thumbnail"
@@ -37,6 +52,23 @@
 <script setup>
 import { toast } from "vue3-toastify";
 
+useHead({
+  title: "Watch The Best Korean BJ Cam Girl Videos Online In High Quality - Skbj.TV",
+  meta: [
+      { charset: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { hid: "description", name: "description", content: "Watch The Best Korean BJ Cam Girl Videos Online In High Quality" },
+      { name: "format-detection", content: "telephone=no" },
+      { name: "referrer", content: "unsafe-url" },
+      { property: "og:locale", content: "en_US" },
+      { property: "og:title", content: "Skbj.TV" },
+      { property: "og:site_name", content: "Skbj.TV" },
+      { property: "og:description", content: "Skbj.TV Official Page - Watch The Best Korean BJ Cam Girl Videos Online In High Quality" },
+      { name: "twitter:title", content: "Skbj.TV" },
+      { name: "twitter:description", content: "Skbj.TV Official Page - Watch The Best Korean BJ Cam Girl Videos Online In High Quality" },
+    ],
+})
+
 const { pending, data: videos } = await useLazyFetch(
   `http://localhost:3030/api/videos`,
   {
@@ -49,14 +81,19 @@ const { pending, data: videos } = await useLazyFetch(
         closeOnClick: false,
       });
     },
-    server: false,
+    server: true,
   }
 );
 const { pending: pendingRandom, data: videosRandom } = await useLazyFetch(
   `http://localhost:3030/api/videos/random`,
   {
-    
-    server: false,
+    server: true,
+  }
+);
+const { pending: pendingFantrie, data: videosFantrie } = await useLazyFetch(
+  `http://localhost:3030/api/videos/getVideosByCategory?category=fantrie`,
+  {
+    server: true,
   }
 );
 </script>

@@ -126,6 +126,6 @@ async function login() {
   margin: 20px 0;
 }
 .text-input {
-  width: 500px;
+  max-width: 500px;
 }
 </style>

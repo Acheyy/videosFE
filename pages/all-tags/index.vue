@@ -7,7 +7,7 @@
       <NuxtLink
         :to="'/videos/'"
         class="card-wrapper"
-        v-for="(actor) in actorsData"
+        v-for="actor in actorsData"
       >
         <div class="thumnail">
           <img :src="actor.thumbnail" />
@@ -26,6 +26,37 @@
 </template>
 
 <script setup>
+useHead({
+  title:
+    "Watch The Best Korean BJ Cam Girl Videos Online In High Quality - Skbj.TV",
+  meta: [
+    { charset: "utf-8" },
+    { name: "viewport", content: "width=device-width, initial-scale=1" },
+    {
+      hid: "description",
+      name: "description",
+      content:
+        "Watch The Best Korean BJ Cam Girl Videos Online In High Quality",
+    },
+    { name: "format-detection", content: "telephone=no" },
+    { name: "referrer", content: "unsafe-url" },
+    { property: "og:locale", content: "en_US" },
+    { property: "og:title", content: "Skbj.TV" },
+    { property: "og:site_name", content: "Skbj.TV" },
+    {
+      property: "og:description",
+      content:
+        "Skbj.TV Official Page - Watch The Best Korean BJ Cam Girl Videos Online In High Quality",
+    },
+    { name: "twitter:title", content: "Skbj.TV" },
+    {
+      name: "twitter:description",
+      content:
+        "Skbj.TV Official Page - Watch The Best Korean BJ Cam Girl Videos Online In High Quality",
+    },
+  ],
+});
+
 const { pending, data: actorsData } = await useLazyFetch(
   `http://localhost:3030/api/tags `,
   {
@@ -53,18 +84,6 @@ const { pending, data: actorsData } = await useLazyFetch(
     .thumnail img {
       width: 100%;
     }
-  }
-}
-.pagination {
-  display: flex;
-  justify-content: center;
-
-  .page-number {
-    border: 1px solid #858585;
-    padding: 7px 15px;
-    border-radius: 3px;
-    margin: 5px;
-    display: inline-block;
   }
 }
 </style>

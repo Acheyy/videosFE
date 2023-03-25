@@ -2,9 +2,9 @@
   <div class="main-wrapper">
     <Header> </Header>
     <Sidebar></Sidebar>
-    <div class="main-content"  :class="{ full: !showSidebar }">
+    <div class="main-content" :class="{ full: !showSidebar }">
       <div class="website-message">
-        !! Website is being built..  <br>
+        !! Website is being built.. <br />
         Some functionalities might not work properly
       </div>
       <slot></slot>
@@ -30,21 +30,27 @@ const { showSidebar } = storeToRefs(sidebarStore);
   position: relative;
 }
 .main-content {
-  margin-left: 240px;
+  margin-left: 300px;
   color: #ffffff;
   transition-duration: 0.1s;
   transition-timing-function: ease-in-out;
   padding: 20px;
-  &.full{
+  &.full {
     margin-left: 0 !important;
   }
 }
 
 .website-message {
-  margin:  0 auto;
+  margin: 0 auto;
   text-align: center;
   font-size: 18px;
   color: red;
   padding: 10px;
+}
+
+@media only screen and (max-width: 1500px) {
+  .main-content {
+    margin-left: 0;
+  }
 }
 </style>

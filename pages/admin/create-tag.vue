@@ -18,7 +18,7 @@ import { toast } from "vue3-toastify";
 
 const rules = computed(() => {
   return {
-    nameInput: { required, minLength: minLength(6) },
+    nameInput: { required, minLength: minLength(4) },
   };
 });
 const formData = reactive({ nameInput: "" });

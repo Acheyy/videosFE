@@ -1,7 +1,7 @@
 <template>
-  <NuxtLink :to="'/videos/' + uploadID" class="card-wrapper">
+  <NuxtLink :to="'/videos/' + uploadID" class="card-wrapper" :title="name" :alt="name">
     <div class="thumnail">
-      <img :src="thumbnail" loading="lazy" />
+      <img :src="thumbnail" loading="lazy" :title="name" :alt="name"/>
       <div class="duration-wrapper">
         {{ $timeFormat(duration) }}
       </div>
@@ -137,6 +137,34 @@ const props = defineProps([
   .card-wrapper {
     width: calc(20% - 16px);
     padding: 6px;
+    margin: 2px;
+  }
+}
+@media only screen and (max-width: 1650px) {
+  .card-wrapper {
+    width: calc(20% - 8px);
+    padding: 2px;
+    margin: 2px;
+  }
+}
+@media only screen and (max-width: 1500px) {
+  .card-wrapper {
+    width: calc(25% - 8px);
+    padding: 2px;
+    margin: 2px;
+  }
+}
+@media only screen and (max-width: 992px) {
+  .card-wrapper {
+    width: calc(33.3333333% - 8px);
+    padding: 2px;
+    margin: 2px;
+  }
+}
+@media only screen and (max-width: 660px) {
+  .card-wrapper {
+    width: calc(50% - 8px);
+    padding: 2px;
     margin: 2px;
   }
 }

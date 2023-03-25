@@ -2,7 +2,6 @@
   <div v-if="isAccountLoading"><Loading2></Loading2></div>
   <div v-else-if="!isAccountLoggedIn" class="non-signup-links">
     <NuxtLink to="/admin/login" class=""> Login </NuxtLink>
-    <div>Sign up</div>
   </div>
   <div v-else style="display: flex">
     <div class="avatar-wrapper">

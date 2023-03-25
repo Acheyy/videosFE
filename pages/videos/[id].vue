@@ -1,6 +1,6 @@
 <template>
   <Loading v-if="pending"></Loading>
-  <div v-else-if="error">Error</div>
+  <div v-else-if="error">Error {{ error }}</div>
   <div v-else class="top-wrapper">
     <div class="main-video-wrapper">
       <div class="player-wrapper">
@@ -15,8 +15,31 @@
           allowfullscreen
         ></IFRAME>
       </div>
-      <!-- <button @click="deleteVideo()">Delete</button> -->
-      <Tag v-for="(tag, index) in video.tags" :tag-name="tag.name"> </Tag>
+      <div class="title">
+        <h1>{{ video.name }}</h1>
+      </div>
+      <div class="actor">
+        <NuxtLink
+          :to="'/all-girls/' + video.actor.slug"
+          class="link"
+          :title="video.actor.name"
+        >
+          <img
+            :src="video.actor.thumbnail"
+            :title="video.actor.name"
+            :alt="video.actor.name"
+          />
+          <div class="actor-info">
+            <div class="name">
+              {{ video.actor.name }}
+            </div>
+            <div class="views">Total videos: {{ video.actor.totalVideos }}</div>
+          </div>
+        </NuxtLink>
+        <div class="tags">
+          <Tag v-for="(tag, index) in video.tags" :tag-name="tag.name"> </Tag>
+        </div>
+      </div>
       <br />
       <br />
       <br />
@@ -37,12 +60,12 @@
         >
           Comment
         </n-button>
+        <br />
+        Note: Reply to reply is not yet shown
       </div>
       <div v-else>
         <NuxtLink to="/admin/login">Login</NuxtLink> to write a comment
       </div>
-      <br />
-      Note: Reply to reply is not yet shown
       <br />
       <br />
       <Comment :comment="comment" v-for="(comment, index) in comments">
@@ -78,15 +101,11 @@ const accountInfoStore = useAccountInfo();
 const { isAccountLoggedIn, accountDetails } = storeToRefs(accountInfoStore);
 const route = useRoute();
 const cookieVideoId = useCookie("cookieVideoId");
-
-async function deleteVideo() {
-  await $fetch(`http://localhost:3030/api/videos?videoId=${route.params.id}`, {
-    method: "DELETE",
-  });
-}
+const title = ref("");
+const actorName = ref("");
+const actorThumb = ref("");
 
 async function writeComment() {
-  console.log(accountDetails);
   await $fetch(`http://localhost:3030/api/comments/${video.value._id}`, {
     method: "POST",
     body: {
@@ -101,29 +120,23 @@ const {
   pending,
   data: video,
   error,
-} = await useLazyFetch(`http://localhost:3030/api/videos/${route.params.id}`, {
-  server: false,
+} = await useFetch(`http://localhost:3030/api/videos/${route.params.id}`, {
+  server: true,
   credentials: "include",
   async onResponse(res) {
-    await useLazyFetch(
-      `http://localhost:3030/api/comments/${res.response._data._id}`,
-      {
-        onResponse(res) {
-          comments.value = { ...res.response._data };
-        },
-        onResponseError() {
-          toast("There was an error loading the comments!", {
-            theme: "dark",
-            type: "error",
-            autoClose: false,
-            toastClassName: "custom-wrapper error",
-            closeOnClick: false,
-          });
-        },
-        server: false,
-      }
-    );
-    if (cookieVideoId.value) {
+    title.value = res.response._data.name;
+    actorName.value = res.response._data.actor.name;
+    actorThumb.value = res.response._data.actor.thumbnail;
+    // await useLazyFetch(
+    //   `http://localhost:3030/api/comments/${res.response._data._id}`,
+    //   {
+    //     onResponse(res) {
+    //       comments.value = { ...res.response._data };
+    //     },
+    //     server: true,
+    //   }
+    // );
+    if (cookieVideoId?.value) {
       if (!cookieVideoId.value.includes(route.params.id)) {
         cookieVideoId.value += route.params.id;
       }
@@ -131,9 +144,106 @@ const {
       cookieVideoId.value = route.params.id;
     }
   },
-  onResponseError(err) {
-    if ((err.response._data.error = "Forbidden")) console.log();
-  },
+});
+
+onServerPrefetch(() => {
+  useHead({
+    title: `Watching ${title.value} Videos Online In High Quality - Skbj.TV`,
+    meta: [
+      { charset: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      {
+        hid: "description",
+        name: "description",
+        content:
+          "Watch The Best Korean BJ Cam Girl Videos Online In High Quality",
+      },
+      { name: "format-detection", content: "telephone=no" },
+      { name: "referrer", content: "unsafe-url" },
+      { property: "og:locale", content: "en_US" },
+      {
+        property: "og:title",
+        content: `Watch ${title.value} Videos Online In High Quality - Skbj.TV`,
+      },
+      { property: "og:site_name", content: "Skbj.TV" },
+      {
+        property: "og:image",
+        hid: "og:image",
+        content: `${actorThumb.value}`,
+      },
+      { property: "og:image:width", content: "400" },
+      { property: "og:image:height", content: "400" },
+      {
+        property: "og:image:alt",
+        content: `${actorName.value} ${title.value}`,
+      },
+      { property: "og:image:type", content: "image/webp" },
+      { property: "og:image:type", content: "image/avif" },
+      {
+        property: "og:description",
+        content:
+          "Skbj.TV Official Page - Watch The Best Korean BJ Cam Girl Videos Online In High Quality",
+      },
+      { name: "twitter:title", content: "Skbj.TV" },
+      {
+        name: "twitter:description",
+        content:
+          "Skbj.TV Official Page - Watch The Best Korean BJ Cam Girl Videos Online In High Quality",
+      },
+      { name: "twitter:image", content: `${actorThumb.value}` },
+    ],
+  });
+});
+
+onMounted(() => {
+  if (title.value) {
+    useHead({
+      title: `Watching ${title.value} Videos Online In High Quality - Skbj.TV`,
+      meta: [
+        { charset: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        {
+          hid: "description",
+          name: "description",
+          content:
+            "Watch The Best Korean BJ Cam Girl Videos Online In High Quality",
+        },
+        { name: "format-detection", content: "telephone=no" },
+        { name: "referrer", content: "unsafe-url" },
+        { property: "og:locale", content: "en_US" },
+        {
+          property: "og:title",
+          content: `Watch ${title.value} Videos Online In High Quality - Skbj.TV`,
+        },
+        { property: "og:site_name", content: "Skbj.TV" },
+        {
+          property: "og:image",
+          hid: "og:image",
+          content: `${actorThumb.value}`,
+        },
+        { property: "og:image:width", content: "400" },
+        { property: "og:image:height", content: "400" },
+        {
+          property: "og:image:alt",
+          content: `${actorName.value} ${title.value}`,
+        },
+        { property: "og:image:type", content: "image/webp" },
+        { property: "og:image:type", content: "image/avif" },
+        {
+          property: "og:description",
+          content:
+            "Skbj.TV Official Page - Watch The Best Korean BJ Cam Girl Videos Online In High Quality",
+        },
+        { name: "twitter:title", content: "Skbj.TV" },
+        {
+          name: "twitter:description",
+          content:
+            "Skbj.TV Official Page - Watch The Best Korean BJ Cam Girl Videos Online In High Quality",
+        },
+        { name: "twitter:image", content: `${actorThumb.value}` },
+      ],
+    });
+  }
 });
 
 const { pending: pendingRecommended, data: videosRecommended } =
@@ -147,7 +257,7 @@ const { pending: pendingRecommended, data: videosRecommended } =
         closeOnClick: false,
       });
     },
-    server: false,
+    server: true,
   });
 </script>
 
@@ -155,7 +265,7 @@ const { pending: pendingRecommended, data: videosRecommended } =
 .top-wrapper {
   display: flex;
   .main-video-wrapper {
-    width: 100%;
+    width: calc(100% - 324px);
     .player-wrapper {
       position: relative;
       background-color: #272727;
@@ -185,10 +295,53 @@ const { pending: pendingRecommended, data: videosRecommended } =
     display: flex;
     flex-direction: column;
     align-items: baseline;
-    width: 100%;
-    max-width: 300px;
-    margin-right: 300px;
+    width: 300px;
     margin-left: 20px;
+  }
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: transparent;
+    overflow: hidden;
+  }
+  .actor-info {
+    margin-left: 8px;
+    text-transform: capitalize;
+    .name {
+      margin-bottom: 8px;
+    }
+  }
+}
+.actor {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  .tags {
+    margin-left: 20px;
+  }
+}
+.title {
+  margin: 16px 0;
+}
+
+@media only screen and (max-width: 992px) {
+  .top-wrapper {
+    flex-wrap: wrap;
+    .main-video-wrapper {
+      width: 100%;
+    }
+    .sidebar-wrapper {
+      width: calc(100% - 8px);
+      margin-top: 20px;
+      margin-left: 0;
+    }
   }
 }
 </style>
