@@ -1,11 +1,11 @@
 <template>
-  <div class="tag-wrapper">
+  <NuxtLink :to="'/tags/' + tagSlug" class="tag-wrapper">
     {{ tagName }}
-  </div>
+  </NuxtLink>
 </template>
 
 <script setup>
-const props = defineProps(["tagName"]);
+const props = defineProps(["tagName", "tagSlug"]);
 </script>
 
 <style lang="scss" scoped>

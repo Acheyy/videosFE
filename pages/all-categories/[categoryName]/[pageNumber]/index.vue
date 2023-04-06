@@ -22,7 +22,7 @@
         v-if="+videos.totalPages > 1"
         :url="'/all-categories/' + route.params.categoryName + '/'"
         :totalPages="+(+videos.totalPages).toFixed(0)"
-        :currentPage="1"
+        :currentPage="+route.params.pageNumber"
       ></Pagination>
     </div>
   </template>
@@ -62,7 +62,7 @@
   });
     
   const { pending, data: videos } = await useLazyFetch(
-    `http://localhost:3030/api/videos/getVideosByCategory?category=${route.params.categoryName}`,
+    `http://localhost:3030/api/videos/getVideosByCategory?category=${route.params.categoryName}&page=${route.params.pageNumber}&limit=30`,
     {
       onResponseError() {
         toast("There was an error! Click here to refresh the data!", {

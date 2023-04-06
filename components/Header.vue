@@ -9,7 +9,7 @@
       </NuxtLink>
     </div>
     <div class="center">
-      <form style="position: relative">
+      <form style="position: relative" onsubmit="return false">
         <div class="search-container">
           <input
             id="search"
@@ -30,7 +30,9 @@
             style="outline: none"
             @keyup="
               processChanges($event);
-              searchStore.triggerSearching(true);
+              if (isLetter($event.key)) {
+                searchStore.triggerSearching(true);
+              }
             "
             @click="handleSearchClick($event)"
           />
@@ -68,6 +70,9 @@ const accountInfoStore = useAccountInfo();
 const { accountDetails } = storeToRefs(accountInfoStore);
 let searchInput = ref("");
 
+function isLetter(key) {
+  return /^[a-zA-Z]$/.test(key) || key === 'Backspace' || key === ' ' || key === 'Enter';
+}
 
 if (token.value) {
   await useLazyFetch(`http://localhost:3030/api/users/getInfo`, {
@@ -107,7 +112,11 @@ async function searchFunction(event) {
     });
 }
 
-const processChanges = debounce((event) => searchFunction(event));
+const processChanges = debounce((event) => {
+  if (isLetter(event.key)) {
+    searchFunction(event);
+  }
+});
 
 const handleSearchClick = async (event) => {
   if (route.path !== "/search") {
@@ -132,7 +141,6 @@ const handleSearchClick = async (event) => {
 
 const submitSearch = () => {
   router.push({ path: `/search` });
-  console.log(router);
 };
 </script>
 

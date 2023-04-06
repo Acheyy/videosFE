@@ -1,38 +1,33 @@
 <template>
     <Loading v-if="pending"></Loading>
     <div v-else>
-      <h1 class="page-title">
-        <span class="strong"> {{ route.params.categoryName }} </span> Videos
-      </h1>
+      <h1 class="page-title">All Categories</h1>
       <div class="cards-wrapper">
-        <VideoCard
-          v-for="(video, index) in videos.videos"
-          :key="index"
-          :uploadID="video.uploadID"
-          :thumbnail="video.thumbnail"
-          :duration="video.duration"
-          :name="video.name"
-          :date="video.createdAt"
-          :actor="video.actor"
-          :category="video.category"
-          :views="video.views"
-        ></VideoCard>
+        <NuxtLink
+          :to="'/tags/' + category.slug"
+          class="card-wrapper"
+          v-for="category in categoryData"
+        >
+          <div class="thumnail">
+            <img :src="category.thumbnail" />
+          </div>
+          <div class="text">
+            <div class="title">{{ category.name }}</div>
+          </div>
+        </NuxtLink>
       </div>
-      <Pagination
-        v-if="+videos.totalPages > 1"
-        :url="'/all-categories/' + route.params.categoryName + '/'"
-        :totalPages="+(+videos.totalPages).toFixed(0)"
-        :currentPage="1"
-      ></Pagination>
+      <!-- <Pagination
+          :url="'/all-videos/'"
+          :totalPages="+(+videos.result.results_total / 100).toFixed(0)"
+          :currentPage="1"
+        ></Pagination> -->
     </div>
   </template>
   
   <script setup>
-  const route = useRoute();
-
   useHead({
     title:
-      `Watch ${route.params.categoryName} The Best Korean BJ Cam Girl Videos Online In High Quality - Skbj.TV`,
+      "Watch All Categories The Best Korean BJ Cam Girl Videos Online In High Quality - Skbj.TV",
     meta: [
       { charset: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
@@ -60,9 +55,9 @@
       },
     ],
   });
-    
-  const { pending, data: videos } = await useLazyFetch(
-    `http://localhost:3030/api/videos/getVideosByCategory?category=${route.params.categoryName}&limit=30`,
+  
+  const { pending, data: categoryData } = await useLazyFetch(
+    `http://localhost:3030/api/tags`,
     {
       onResponseError() {
         toast("There was an error! Click here to refresh the data!", {
@@ -82,17 +77,12 @@
   .cards-wrapper {
     display: flex;
     flex-wrap: wrap;
-  }
-  .strong {
-    font-weight: 900;
-    text-transform: capitalize;
-  }
-  .image-wrapper {
-    max-width: 400px;
-    margin: 0 auto;
-    margin-bottom: 20px;
-    img {
-      width: 100%;
+    .card-wrapper {
+      width: calc(16.666666% - 16px);
+      margin: 8px;
+      .thumnail img {
+        width: 100%;
+      }
     }
   }
   </style>

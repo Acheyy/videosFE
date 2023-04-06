@@ -1,5 +1,5 @@
 <template>
-  <Loading v-if="pending || pendingRandom || pendingFantrie"></Loading>
+  <Loading v-if="pending || pendingRandom || pendingFantrie || pendingTwitch"></Loading>
   <div v-else>
     <div class="cards-title">Most Recent:</div>
     <div class="cards-wrapper">
@@ -20,6 +20,21 @@
     <div class="cards-wrapper">
       <VideoCard
         v-for="(video, index) in videosFantrie.videos"
+        :key="index"
+        :uploadID="video.uploadID"
+        :thumbnail="video.thumbnail"
+        :duration="video.duration"
+        :name="video.name"
+        :date="video.createdAt"
+        :actor="video.actor"
+        :category="video.category"
+        :views="video.views"
+      ></VideoCard>
+    </div>
+    <div class="cards-title margin-top">Twitch:</div>
+    <div class="cards-wrapper">
+      <VideoCard
+        v-for="(video, index) in videosTwitch.videos"
         :key="index"
         :uploadID="video.uploadID"
         :thumbnail="video.thumbnail"
@@ -61,11 +76,24 @@ useHead({
       { name: "format-detection", content: "telephone=no" },
       { name: "referrer", content: "unsafe-url" },
       { property: "og:locale", content: "en_US" },
-      { property: "og:title", content: "Skbj.TV" },
+      { property: "og:title", content: "Watch The Best Korean BJ Cam Girl Videos Online In High Quality - Skbj.TV" },
+      {
+        property: "og:image",
+        hid: "og:image",
+        content: `http://localhost:3030/images/seo-image.jpg`,
+      },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      {
+        property: "og:image:alt",
+        content: `SKBJ Logo`,
+      },
       { property: "og:site_name", content: "Skbj.TV" },
       { property: "og:description", content: "Skbj.TV Official Page - Watch The Best Korean BJ Cam Girl Videos Online In High Quality" },
-      { name: "twitter:title", content: "Skbj.TV" },
+      { name: "twitter:title", content: "Watch The Best Korean BJ Cam Girl Videos Online In High Quality - Skbj.TV" },
       { name: "twitter:description", content: "Skbj.TV Official Page - Watch The Best Korean BJ Cam Girl Videos Online In High Quality" },
+      { name: "twitter:image", content: `http://localhost:3030/images/seo-image.jpg` },
+
     ],
 })
 
@@ -92,6 +120,12 @@ const { pending: pendingRandom, data: videosRandom } = await useLazyFetch(
 );
 const { pending: pendingFantrie, data: videosFantrie } = await useLazyFetch(
   `http://localhost:3030/api/videos/getVideosByCategory?category=fantrie`,
+  {
+    server: true,
+  }
+);
+const { pending: pendingTwitch, data: videosTwitch } = await useLazyFetch(
+  `http://localhost:3030/api/videos/getVideosByCategory?category=twitch`,
   {
     server: true,
   }

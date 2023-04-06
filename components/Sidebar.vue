@@ -18,6 +18,12 @@
       </div>
       <span>All Girls</span>
     </NuxtLink>
+    <NuxtLink to="/most-popular" class="link" @click="closeSidebarMobile()">
+      <div class="icon">
+        <IconsPopular></IconsPopular>
+      </div>
+      <span>Most Popular</span>
+    </NuxtLink>
     <NuxtLink to="/all-categories" class="link" @click="closeSidebarMobile()">
       <div class="icon">
         <IconsTag></IconsTag>

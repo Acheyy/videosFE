@@ -37,7 +37,7 @@
           </div>
         </NuxtLink>
         <div class="tags">
-          <Tag v-for="(tag, index) in video.tags" :tag-name="tag.name"> </Tag>
+          <Tag v-for="(tag, index) in video.tags" :tag-name="tag.name" :tag-slug="tag.slug"> </Tag>
         </div>
       </div>
       <br />
@@ -52,7 +52,6 @@
           type="textarea"
           placeholder="Write a comment..."
         />
-        {{ formData.commentBody }}
         <n-button
           :theme="$darkTheme"
           :theme-overrides="$themeOverrides"
@@ -104,6 +103,7 @@ const cookieVideoId = useCookie("cookieVideoId");
 const title = ref("");
 const actorName = ref("");
 const actorThumb = ref("");
+const videoThumb = ref("");
 
 async function writeComment() {
   await $fetch(`http://localhost:3030/api/comments/${video.value._id}`, {
@@ -126,16 +126,7 @@ const {
   async onResponse(res) {
     title.value = res.response._data.name;
     actorName.value = res.response._data.actor.name;
-    actorThumb.value = res.response._data.actor.thumbnail;
-    // await useLazyFetch(
-    //   `http://localhost:3030/api/comments/${res.response._data._id}`,
-    //   {
-    //     onResponse(res) {
-    //       comments.value = { ...res.response._data };
-    //     },
-    //     server: true,
-    //   }
-    // );
+    videoThumb.value = res.response._data.thumbnail;
     if (cookieVideoId?.value) {
       if (!cookieVideoId.value.includes(route.params.id)) {
         cookieVideoId.value += route.params.id;
@@ -146,9 +137,21 @@ const {
   },
 });
 
+setTimeout(async () => {
+  await useLazyFetch(
+    `http://localhost:3030/api/comments/${video.value._id}`,
+    {
+      onResponse(res) {
+        comments.value = { ...res.response._data };
+      },
+      server: true,
+    }
+  );
+}, 250);
+
 onServerPrefetch(() => {
   useHead({
-    title: `Watching ${title.value} Videos Online In High Quality - Skbj.TV`,
+    title: `Watching ${title.value} Korean BJ Video Online In High Quality - Skbj.TV`,
     meta: [
       { charset: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
@@ -163,16 +166,16 @@ onServerPrefetch(() => {
       { property: "og:locale", content: "en_US" },
       {
         property: "og:title",
-        content: `Watch ${title.value} Videos Online In High Quality - Skbj.TV`,
+        content: `Watch ${title.value} Korean BJ Video Online In High Quality - Skbj.TV`,
       },
       { property: "og:site_name", content: "Skbj.TV" },
       {
         property: "og:image",
         hid: "og:image",
-        content: `${actorThumb.value}`,
+        content: `${videoThumb.value}`,
       },
-      { property: "og:image:width", content: "400" },
-      { property: "og:image:height", content: "400" },
+      { property: "og:image:width", content: "720" },
+      { property: "og:image:height", content: "405" },
       {
         property: "og:image:alt",
         content: `${actorName.value} ${title.value}`,
@@ -190,7 +193,7 @@ onServerPrefetch(() => {
         content:
           "Skbj.TV Official Page - Watch The Best Korean BJ Cam Girl Videos Online In High Quality",
       },
-      { name: "twitter:image", content: `${actorThumb.value}` },
+      { name: "twitter:image", content: `${videoThumb.value}` },
     ],
   });
 });
@@ -198,7 +201,7 @@ onServerPrefetch(() => {
 onMounted(() => {
   if (title.value) {
     useHead({
-      title: `Watching ${title.value} Videos Online In High Quality - Skbj.TV`,
+      title: `Watching ${title.value} Korean BJ Video Online In High Quality - Skbj.TV`,
       meta: [
         { charset: "utf-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
@@ -213,13 +216,13 @@ onMounted(() => {
         { property: "og:locale", content: "en_US" },
         {
           property: "og:title",
-          content: `Watch ${title.value} Videos Online In High Quality - Skbj.TV`,
+          content: `Watch ${title.value} Korean BJ Video Online In High Quality - Skbj.TV`,
         },
         { property: "og:site_name", content: "Skbj.TV" },
         {
           property: "og:image",
           hid: "og:image",
-          content: `${actorThumb.value}`,
+          content: `${videoThumb.value}`,
         },
         { property: "og:image:width", content: "400" },
         { property: "og:image:height", content: "400" },
@@ -240,7 +243,7 @@ onMounted(() => {
           content:
             "Skbj.TV Official Page - Watch The Best Korean BJ Cam Girl Videos Online In High Quality",
         },
-        { name: "twitter:image", content: `${actorThumb.value}` },
+        { name: "twitter:image", content: `${videoThumb.value}` },
       ],
     });
   }
