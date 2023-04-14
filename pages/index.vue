@@ -14,6 +14,8 @@
         :actor="video.actor"
         :category="video.category"
         :views="video.views"
+        :likes="video.likes?.length"
+        :snapshots="video.snapshots"
       ></VideoCard>
     </div>
     <div class="cards-title margin-top">Fantrie:</div>
@@ -29,6 +31,8 @@
         :actor="video.actor"
         :category="video.category"
         :views="video.views"
+        :likes="video.likes?.length"
+        :snapshots="video.snapshots"
       ></VideoCard>
     </div>
     <div class="cards-title margin-top">Twitch:</div>
@@ -44,6 +48,8 @@
         :actor="video.actor"
         :category="video.category"
         :views="video.views"
+        :likes="video.likes?.length"
+        :snapshots="video.snapshots"
       ></VideoCard>
     </div>
     <div class="cards-title margin-top">Random:</div>
@@ -59,6 +65,8 @@
         :actor="video.actor"
         :category="video.category"
         :views="video.views"
+        :likes="video.likes?.length"
+        :snapshots="video.snapshots"
       ></VideoCard>
     </div>
   </div>

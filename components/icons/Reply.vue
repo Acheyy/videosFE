@@ -2,8 +2,8 @@
   <svg
     version="1.1"
     id="Layer_1"
-    xmlns="http://www.w3.org/2000/svg"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns="https://www.w3.org/2000/svg"
+    xmlns:xlink="https://www.w3.org/1999/xlink"
     x="0px"
     y="0px"
     viewBox="0 0 122.88 98.86"

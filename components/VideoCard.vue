@@ -1,21 +1,45 @@
 <template>
-  <NuxtLink :to="'/videos/' + uploadID" class="card-wrapper" :title="name" :alt="name">
+  <NuxtLink
+    :to="'/videos/' + uploadID"
+    class="card-wrapper"
+    :title="name"
+    :alt="name"
+    @mouseenter="startThumbnailLoop"
+    @mouseleave="stopThumbnailLoop"
+    @touchstart="startThumbnailLoop"
+    @touchend="stopThumbnailLoop"
+  >
     <div class="thumnail">
-      <img :src="thumbnail" loading="lazy" :title="name" :alt="name"/>
+      <nuxt-img
+        format="webp"
+        :src="currentThumbnail + '?width=275'"
+        loading="lazy"
+        :title="name"
+        :alt="name"
+      />
       <div class="duration-wrapper">
         {{ $timeFormat(duration) }}
       </div>
     </div>
     <div class="details">
       <div class="avatar">
-        <img :src="actor.thumbnail" :title="actor.name" :alt="actor.name" />
+        <img
+          format="webp"
+          :src="actor.thumbnail + '?width=40'"
+          loading="lazy"
+          :title="actor.name"
+          :alt="actor.name"
+        />
       </div>
       <div class="main-details">
         <div class="main-title">{{ name }}</div>
         <div class="meta-info">
           <div class="meta-category">{{ category.name }}</div>
           <div class="meta-details">
-            {{ views.views }} views * {{ $timeAgo.format(new Date(date)) }}
+            {{ views?.views }} views * {{ $timeAgo.format(new Date(date)) }}
+            <br />
+            
+            {{ getLikesText(likes) }} 
           </div>
         </div>
       </div>
@@ -24,16 +48,63 @@
 </template>
 
 <script setup>
-const props = defineProps([
-  "uploadID",
-  "thumbnail",
-  "duration",
-  "name",
-  "date",
-  "actor",
-  "category",
-  "views",
-]);
+const {
+  snapshots,
+  uploadID,
+  thumbnail,
+  duration,
+  name,
+  date,
+  actor,
+  category,
+  views,
+  likes,
+} = defineProps({
+  snapshots: Array,
+  uploadID: String,
+  thumbnail: String,
+  duration: Number,
+  likes: Number,
+  name: String,
+  date: String,
+  actor: Object,
+  category: Object,
+  views: Object,
+});
+
+let currentThumbnail = ref(thumbnail);
+let thumbnailInterval;
+
+const startThumbnailLoop = () => {
+  // Check if snapshots exists and has at least one element
+  if (!snapshots || snapshots.length === 0) {
+    return;
+  }
+
+  if (thumbnailInterval) {
+    clearInterval(thumbnailInterval);
+  }
+  let index = 1;
+  thumbnailInterval = setInterval(() => {
+    currentThumbnail.value = snapshots[index] + "?width=275";
+    index = (index + 1) % snapshots.length;
+  }, 700);
+};
+
+const stopThumbnailLoop = () => {
+  clearInterval(thumbnailInterval);
+  currentThumbnail.value = thumbnail;
+};
+
+function getLikesText(likes) {
+  if (likes === null || likes === 0 || likes === undefined) {
+    return "Nobody liked :(";
+  } else if (likes === 1) {
+    return "1 like";
+  } else {
+    return `${likes} likes`;
+  }
+}
 </script>
 
 <style scoped lang="scss">

@@ -1,5 +1,5 @@
 <template>
-  <div class="upload-wrapper">
+  <div class="upload-wrapper" v-if="accountDetails.isAdmin">
     <input
       type="file"
       id="video"
@@ -72,6 +72,10 @@
 
 <script setup>
 import { toast } from "vue3-toastify";
+import { useAccountInfo } from "~/store/accountInfo";
+import { storeToRefs } from "pinia";
+const accountInfoStore = useAccountInfo();
+const { isAccountLoggedIn, accountDetails } = storeToRefs(accountInfoStore);
 
 const files = ref([]);
 let nameInput = ref("");
@@ -85,7 +89,7 @@ let tagIds = ref([]);
 const handleFileSelection = (event) => {
   let uploadedFiles = event.target.files;
   files.value = uploadedFiles;
-  nameInput.value = files.value[0].name.split('.').slice(0, -1).join('.');
+  nameInput.value = files.value[0].name.split(".").slice(0, -1).join(".");
 };
 const handleNameInput = (event) => {
   nameInput.value = event.target.value;
@@ -108,6 +112,42 @@ const handleTagSelect = (event, ID) => {
     tagIds.value = tagIds.value.filter((e) => e !== ID);
   }
 };
+
+async function captureThumbnail(videoFile, time) {
+  return new Promise((resolve) => {
+    const video = document.createElement("video");
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    video.addEventListener("loadeddata", () => {
+      video.currentTime = time;
+    });
+
+    video.addEventListener("seeked", () => {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob((blob) => {
+        resolve(blob);
+      }, "image/jpeg");
+    });
+
+    video.src = URL.createObjectURL(videoFile);
+  });
+}
+
+async function getVideoDuration(videoFile) {
+  return new Promise((resolve) => {
+    const video = document.createElement("video");
+
+    video.addEventListener("loadedmetadata", () => {
+      resolve(video.duration);
+    });
+
+    video.src = URL.createObjectURL(videoFile);
+  });
+}
+
 async function submitVideo() {
   let formData = new FormData();
   console.log("tagIds.value", tagIds.value);
@@ -117,6 +157,28 @@ async function submitVideo() {
   formData.append("actor", actorId.value);
   formData.append("video", files.value[0]);
   console.log(formData.values);
+  // Get video duration
+  const duration = await getVideoDuration(files.value[0]);
+
+  // Calculate the times at which to capture the thumbnails based on percentages
+  const captureTimes = [0.1, 0.3, 0.6, 0.8].map(
+    (percentage) => duration * percentage
+  );
+
+  // Capture thumbnails from the video
+  const thumbnails = await Promise.all(
+    captureTimes.map((time) => captureThumbnail(files.value[0], time))
+  );
+
+  // Append thumbnails to formData
+  thumbnails.forEach((thumbnail, index) => {
+    formData.append(
+      `thumbnail${index + 1}`,
+      thumbnail,
+      `thumbnail${index + 1}.jpg`
+    );
+  });
+
   await $fetch(`http://localhost:3030/api/videos`, {
     method: "POST",
     body: formData,

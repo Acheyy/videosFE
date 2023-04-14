@@ -14,9 +14,35 @@
           HEIGHT="360"
           allowfullscreen
         ></IFRAME>
+        <!-- Enable premium video -->
+        <!-- <div class="premium-container">
+          <img :src="video.thumbnail" />
+          <div class="overlay">
+            <div class="premium-wrapper">
+              <div class="premium-message">
+                This video can be watched by Premium users!
+              </div>
+              <UpgradeToPremiumButton
+                v-if="isAccountLoggedIn && !accountDetails.isUserPremium"
+              ></UpgradeToPremiumButton>
+              <div v-if="!isAccountLoggedIn">
+                Please <NuxtLink to="/register">create an account</NuxtLink> and
+                upgrade to Premium <br /><br />
+                Or go to <NuxtLink to="/login">Login</NuxtLink>
+              </div>
+            </div>
+          </div>
+        </div> -->
       </div>
       <div class="title">
         <h1>{{ video.name }}</h1>
+        <div class="actions">
+          <div class="count" v-text="likesCount"></div>
+          <div class="favorites-wrapper" @click="like">
+            <IconsHeart v-if="!isLiked" />
+            <IconsHeartFull v-else />
+          </div>
+        </div>
       </div>
       <div class="actor">
         <NuxtLink
@@ -25,7 +51,7 @@
           :title="video.actor.name"
         >
           <img
-            :src="video.actor.thumbnail"
+            :src="video.actor.thumbnail + '?width=80'"
             :title="video.actor.name"
             :alt="video.actor.name"
           />
@@ -37,10 +63,34 @@
           </div>
         </NuxtLink>
         <div class="tags">
-          <Tag v-for="(tag, index) in video.tags" :tag-name="tag.name" :tag-slug="tag.slug"> </Tag>
+          <Tag
+            v-for="(tag, index) in video.tags"
+            :tag-name="tag.name"
+            :tag-slug="tag.slug"
+          >
+          </Tag>
+        </div>
+        <div class="premium-download">
+          <n-button
+            :theme="$darkTheme"
+            :theme-overrides="$themeOverrides"
+            @click="downloadFile"
+          >
+            Premium Download
+          </n-button>
         </div>
       </div>
       <br />
+      <br />
+      <div class="snapshots" v-if="video.snapshots.length">
+        <nuxt-img
+          format="webp"
+          :src="snapshot"
+          v-for="(snapshot, index) in video.snapshots"
+          :alt="video.name + ' ' + (index + 1)"
+          :title="video.name + ' ' + (index + 1)"
+        />
+      </div>
       <br />
       <br />
       <div v-if="isAccountLoggedIn">
@@ -63,7 +113,7 @@
         Note: Reply to reply is not yet shown
       </div>
       <div v-else>
-        <NuxtLink to="/admin/login">Login</NuxtLink> to write a comment
+        <NuxtLink to="/login">Login</NuxtLink> to write a comment
       </div>
       <br />
       <br />
@@ -74,7 +124,7 @@
         ></Comment>
       </Comment>
     </div>
-    <div class="sidebar-wrapper">
+    <div class="sidebar-wrapper" v-if="!pendingRecommended">
       <VideoCard
         v-for="(video, index) in videosRecommended"
         :key="index"
@@ -86,14 +136,20 @@
         :actor="video.actor"
         :category="video.category"
         :views="video.views"
+        :likes="video.likes?.length"
+        :snapshots="video.snapshots"
       ></VideoCard>
     </div>
   </div>
 </template>
 
 <script setup>
+import { toast } from "vue3-toastify";
 import { useAccountInfo } from "~/store/accountInfo";
 import { storeToRefs } from "pinia";
+import DOMPurify from "dompurify";
+const headers = useRequestHeaders(["cookie"]);
+const router = useRouter();
 const formData = reactive({ commentBody: "" });
 let comments = ref([]);
 const accountInfoStore = useAccountInfo();
@@ -104,17 +160,122 @@ const title = ref("");
 const actorName = ref("");
 const actorThumb = ref("");
 const videoThumb = ref("");
+const isLiked = ref(false);
+const likesCount = ref(0);
 
 async function writeComment() {
+  const sanitizedComment = DOMPurify.sanitize(formData.commentBody);
+
   await $fetch(`http://localhost:3030/api/comments/${video.value._id}`, {
     method: "POST",
     body: {
-      commentBody: formData.commentBody,
+      commentBody: sanitizedComment,
       author: accountDetails.value._id,
       videoId: video.value._id,
     },
   });
 }
+
+const like = async () => {
+  if (!isAccountLoggedIn.value) {
+    toast("Please signin to access this feature", {
+      theme: "dark",
+      type: "error",
+      autoClose: true,
+      toastClassName: "custom-wrapper error",
+      closeOnClick: true,
+    });
+    return;
+  }
+
+  isLiked.value = !isLiked.value;
+
+  console.log(isLiked.value);
+  if (isLiked.value) {
+    likesCount.value++;
+  } else {
+    likesCount.value--;
+  }
+
+  fetch(`http://localhost:3030/api/videos/like/${video.value._id}`, {
+    credentials: "include",
+  });
+};
+
+const downloadFile = async () => {
+  try {
+    const blobName = video.value.fileName; // Replace with the actual video filename
+    const downloadUrl = `http://localhost:3030/api/videos/download/${encodeURIComponent(
+      blobName
+    )}`;
+
+    // Check if the file exists
+    const existsResponse = await fetch(
+      `http://localhost:3030/api/videos/fileExists/${encodeURIComponent(
+        blobName
+      )}`
+    );
+    if (!existsResponse.ok) {
+      toast("There was an error! The file not found", {
+        theme: "dark",
+        type: "error",
+        autoClose: true,
+        toastClassName: "custom-wrapper error",
+        closeOnClick: true,
+      });
+      throw new Error("Error checking file existence");
+    }
+    const { exists } = await existsResponse.json();
+
+    if (!isAccountLoggedIn.value) {
+      toast("Please signin to access this feature", {
+        theme: "dark",
+        type: "error",
+        autoClose: true,
+        toastClassName: "custom-wrapper error",
+        closeOnClick: true,
+      });
+      return;
+    }
+
+    if (!accountDetails.value.isUserPremium) {
+      toast("This is a premium feature!", {
+        theme: "dark",
+        type: "error",
+        autoClose: true,
+        toastClassName: "custom-wrapper error",
+        closeOnClick: true,
+      });
+      return;
+    }
+
+    if (!exists) {
+      console.error("File not found:", blobName);
+      toast("Premium download not available for this video!", {
+        theme: "dark",
+        type: "error",
+        autoClose: true,
+        toastClassName: "custom-wrapper error",
+        closeOnClick: true,
+      });
+      return;
+    }
+
+    // Create an anchor element and set its href to the download URL
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.download = blobName;
+
+    // Add the link to the document, trigger a click, and remove it after the download starts
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => {
+      document.body.removeChild(link);
+    }, 100);
+  } catch (error) {
+    console.error("Error downloading file:", error);
+  }
+};
 
 const {
   pending,
@@ -123,30 +284,43 @@ const {
 } = await useFetch(`http://localhost:3030/api/videos/${route.params.id}`, {
   server: true,
   credentials: "include",
-  async onResponse(res) {
-    title.value = res.response._data.name;
-    actorName.value = res.response._data.actor.name;
-    videoThumb.value = res.response._data.thumbnail;
-    if (cookieVideoId?.value) {
-      if (!cookieVideoId.value.includes(route.params.id)) {
-        cookieVideoId.value += route.params.id;
+  headers,
+  onResponse(res) {
+    console.log(res);
+    if (res.response.status === 200) {
+      title.value = res.response._data.name;
+      actorName.value = res.response._data.actor.name;
+      videoThumb.value = res.response._data.thumbnail;
+      likesCount.value = res.response._data.likes.length;
+
+      // Set isLiked.value based on whether accountDetails._id is in the likes array
+      isLiked.value = res.response._data.likes.includes(
+        accountDetails.value._id
+      );
+
+      if (cookieVideoId?.value) {
+        if (!cookieVideoId.value.includes(route.params.id)) {
+          cookieVideoId.value += route.params.id;
+        }
+      } else {
+        cookieVideoId.value = route.params.id;
       }
     } else {
-      cookieVideoId.value = route.params.id;
+      router.push({ path: `/404` });
     }
+  },
+  onResponseError(err) {
+    router.push({ path: `/404` });
   },
 });
 
 setTimeout(async () => {
-  await useLazyFetch(
-    `http://localhost:3030/api/comments/${video.value._id}`,
-    {
-      onResponse(res) {
-        comments.value = { ...res.response._data };
-      },
-      server: true,
-    }
-  );
+  await useLazyFetch(`http://localhost:3030/api/comments/${video.value._id}`, {
+    onResponse(res) {
+      comments.value = { ...res.response._data };
+    },
+    server: true,
+  });
 }, 250);
 
 onServerPrefetch(() => {
@@ -196,6 +370,15 @@ onServerPrefetch(() => {
       { name: "twitter:image", content: `${videoThumb.value}` },
     ],
   });
+});
+const hasUpdatedOnce = ref(false);
+
+onUpdated(() => {
+  if (!hasUpdatedOnce.value) {
+    isLiked.value = video.value.likes.includes(accountDetails.value._id);
+    likesCount.value = video.value.likes.length;
+    hasUpdatedOnce.value = true;
+  }
 });
 
 onMounted(() => {
@@ -265,6 +448,15 @@ const { pending: pendingRecommended, data: videosRecommended } =
 </script>
 
 <style lang="scss" scoped>
+.snapshots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  img {
+    margin: 4px;
+  }
+}
 .top-wrapper {
   display: flex;
   .main-video-wrapper {
@@ -279,7 +471,8 @@ const { pending: pendingRecommended, data: videosRecommended } =
         padding-top: 56.25%;
       }
 
-      iframe {
+      iframe,
+      .premium-container {
         width: 100%;
         position: absolute;
         height: 100%;
@@ -291,6 +484,44 @@ const { pending: pendingRecommended, data: videosRecommended } =
         right: 0;
         bottom: 0;
         left: 0;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .premium-container {
+        img {
+          width: 100%;
+        }
+
+        .overlay {
+          position: absolute;
+          z-index: 1;
+          color: #ffffff;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          backdrop-filter: blur(25px);
+          display: flex;
+          align-items: center;
+          flex-direction: column;
+          justify-content: center;
+          .premium-wrapper {
+            padding: 30px 30px 50px 30px;
+            background-color: #0f0f0f95;
+            border: 1px solid #cacaca;
+            border-radius: 8px;
+            text-align: center;
+            a {
+              text-decoration: underline;
+            }
+          }
+          .premium-message {
+            margin-bottom: 40px;
+          }
+        }
       }
     }
   }
@@ -322,6 +553,15 @@ const { pending: pendingRecommended, data: videosRecommended } =
     }
   }
 }
+
+.premium-download {
+  display: flex;
+  justify-content: flex-end;
+  margin-left: 20px;
+  button {
+    border: 1px solid gold;
+  }
+}
 .actor {
   display: flex;
   flex-wrap: wrap;
@@ -332,6 +572,36 @@ const { pending: pendingRecommended, data: videosRecommended } =
 }
 .title {
   margin: 16px 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  .actions {
+    position: relative;
+    .count {
+      cursor: default;
+      position: absolute;
+      top: 8px;
+      right: 52px;
+    }
+    .favorites-wrapper {
+      margin-left: 60px;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      padding: 4px;
+      margin-top: -10px;
+      transition-duration: 0.25s;
+      transition-timing-function: ease-in-out;
+
+      &:hover {
+        background-color: #272727;
+      }
+      svg {
+        fill: #fff;
+      }
+    }
+  }
 }
 
 @media only screen and (max-width: 992px) {

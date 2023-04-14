@@ -14,6 +14,8 @@
           :actor="video.videoId.actor"
           :category="video.videoId.category"
           :views="video.videoId.views"
+          :likes="video.videoId.likes.length"
+          :snapshots="video.videoId.snapshots"
         ></VideoCard>
       </div>
       <Pagination

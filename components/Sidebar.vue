@@ -1,5 +1,8 @@
 <template>
-  <div class="sidebar-main-wrapper" :class="{ active: showSidebar }">
+  <div
+    class="sidebar-main-wrapper"
+    :class="{ 'mobile-class': mobileClass, active: showSidebar }"
+  >
     <NuxtLink to="/" class="link" @click="closeSidebarMobile()">
       <div class="icon">
         <IconsHome></IconsHome>
@@ -24,13 +27,25 @@
       </div>
       <span>Most Popular</span>
     </NuxtLink>
+    <NuxtLink to="/most-liked" class="link" @click="closeSidebarMobile()">
+      <div class="icon">
+        <IconsHeart></IconsHeart>
+      </div>
+      <span>Most Liked</span>
+    </NuxtLink>
     <NuxtLink to="/all-categories" class="link" @click="closeSidebarMobile()">
       <div class="icon">
         <IconsTag></IconsTag>
       </div>
       <span>All Categories</span>
     </NuxtLink>
-    <NuxtLink to="https://discord.gg/gCcUVYAaNE" target="_blank" class="link" @click="closeSidebarMobile()">
+    <div class="sidebar-separator"></div>
+    <NuxtLink
+      to="https://discord.gg/gCcUVYAaNE"
+      target="_blank"
+      class="link"
+      @click="closeSidebarMobile()"
+    >
       <div class="icon">
         <IconsDiscord></IconsDiscord>
       </div>
@@ -44,10 +59,22 @@
     </NuxtLink> -->
     <NuxtLink to="/contact" class="link" @click="closeSidebarMobile()">
       <div class="icon">
-        <!-- <IconsTag></IconsTag> -->
+        <IconsLetter></IconsLetter>
       </div>
       <span>Contact</span>
     </NuxtLink>
+    <client-only>
+      <UpgradeToPremiumButton
+        v-if="isAccountLoggedIn && !accountDetails.isUserPremium"
+      ></UpgradeToPremiumButton>
+      <div
+        style="margin-top: 10px"
+        v-if="isAccountLoggedIn && accountDetails.isUserPremium"
+      >
+        Premium Expires:
+        {{ $timeAgo.format(new Date(accountDetails?.premiumExpiry)) }}
+      </div>
+    </client-only>
   </div>
 </template>
 
@@ -55,6 +82,11 @@
 import { useSidebarStore } from "~/store/sidebar";
 import { storeToRefs } from "pinia";
 import AllVideos from "./icons/AllVideos.vue";
+import { useAccountInfo } from "~/store/accountInfo";
+const mobileClass = ref(true);
+const accountInfoStore = useAccountInfo();
+
+const { isAccountLoggedIn, accountDetails } = storeToRefs(accountInfoStore);
 
 const sidebarStore = useSidebarStore();
 
@@ -64,6 +96,9 @@ onMounted(() => {
   if (window?.innerWidth < 1500) {
     sidebarStore.triggerSidebar();
   }
+  setTimeout(() => {
+    mobileClass.value = false;
+  }, 1000); // 1 seconds delay
 });
 
 function closeSidebarMobile() {
@@ -74,6 +109,7 @@ function closeSidebarMobile() {
 </script>
 
 <style scoped lang="scss">
+
 .sidebar-main-wrapper {
   display: flex;
   flex-direction: column;
@@ -92,9 +128,15 @@ function closeSidebarMobile() {
   transition-timing-function: ease-in-out;
   z-index: 9;
   background-color: #0f0f0f;
+  @media only screen and (max-width: 1500px) {
+    &.mobile-class {
+      display: none;
+    }
+  }
   &.active {
     left: 0;
   }
+
   &::-webkit-scrollbar {
     width: 4px;
     border-radius: 10px;
@@ -129,5 +171,12 @@ function closeSidebarMobile() {
       margin-right: 20px;
     }
   }
+}
+
+.sidebar-separator {
+  margin: 16px 0;
+  width: 100%;
+  height: 1px;
+  background-color: #2e2e2e;
 }
 </style>

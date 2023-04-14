@@ -1,6 +1,6 @@
 <template>
   <p>
-    Contact email: <strong>contact.sexkbj@gmail.com</strong>
+    Contact email: <strong>contact@skbj.tv</strong>
   </p>
   <p>
     If you have any requests please send them in the discord:

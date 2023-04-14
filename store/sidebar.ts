@@ -11,5 +11,8 @@ export const useSidebarStore = defineStore({
     triggerSidebar() {
       this.showSidebar = !this.showSidebar;
     },
+    updateShowSidebar() {
+      this.showSidebar = window.innerWidth < 1500;
+    },
   }
 });

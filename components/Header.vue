@@ -71,7 +71,12 @@ const { accountDetails } = storeToRefs(accountInfoStore);
 let searchInput = ref("");
 
 function isLetter(key) {
-  return /^[a-zA-Z]$/.test(key) || key === 'Backspace' || key === ' ' || key === 'Enter';
+  return (
+    /^[a-zA-Z]$/.test(key) ||
+    key === "Backspace" ||
+    key === " " ||
+    key === "Enter"
+  );
 }
 
 if (token.value) {
@@ -154,6 +159,12 @@ const submitSearch = () => {
   z-index: 999;
   box-shadow: 0 0 3px red;
   background-color: #0f0f0f !important;
+
+  @media only screen and (max-width: 660px) {
+    .center {
+      display: none;
+    }
+  }
 }
 
 .upload-icon {

@@ -6,7 +6,15 @@ export const useAccountInfo = defineStore({
     return {
       isAccountLoggedIn: false,
       isAccountLoading: false,
-      accountDetails: { userName: "", email: "", avatar: "", _id: "" },
+      accountDetails: {
+        userName: "",
+        email: "",
+        avatar: "",
+        _id: "",
+        isUserPremium: false,
+        premiumExpiry: '',
+        isAdmin: false,
+      },
     };
   },
   actions: {
@@ -22,10 +30,21 @@ export const useAccountInfo = defineStore({
         email: user.email,
         avatar: user.avatar,
         _id: user._id,
+        isUserPremium: user.isUserPremium,
+        premiumExpiry: user.premiumExpiry,
+        isAdmin: user.isAdmin,
       };
     },
     async deleteAccountInfo() {
-      this.accountDetails = { userName: "", email: "", avatar: "", _id: "" };
+      this.accountDetails = {
+        userName: "",
+        email: "",
+        avatar: "",
+        _id: "",
+        isUserPremium: false,
+        premiumExpiry: '',
+        isAdmin: false,
+      };
     },
   },
 });

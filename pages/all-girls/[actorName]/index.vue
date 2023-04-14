@@ -37,6 +37,8 @@
         :actor="video.actor"
         :category="video.category"
         :views="video.views"
+        :likes="video.likes?.length"
+        :snapshots="video.snapshots"
       ></VideoCard>
     </div>
     <QueryPagination
