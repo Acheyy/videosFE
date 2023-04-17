@@ -9,11 +9,17 @@
       </div>
       <span>Home</span>
     </NuxtLink>
-    <NuxtLink to="/all-videos" class="link" @click="closeSidebarMobile()">
+    <NuxtLink to="/videos" class="link" @click="closeSidebarMobile()">
       <div class="icon">
         <AllVideos></AllVideos>
       </div>
       <span>All Videos</span>
+    </NuxtLink>
+    <NuxtLink to="/tags/vip" class="link" @click="closeSidebarMobile()">
+      <div class="icon">
+        <IconsCrown></IconsCrown>
+      </div>
+      <span>VIP</span>
     </NuxtLink>
     <NuxtLink to="/all-girls" class="link" @click="closeSidebarMobile()">
       <div class="icon">
@@ -33,6 +39,7 @@
       </div>
       <span>Most Liked</span>
     </NuxtLink>
+
     <NuxtLink to="/all-categories" class="link" @click="closeSidebarMobile()">
       <div class="icon">
         <IconsTag></IconsTag>
@@ -109,7 +116,6 @@ function closeSidebarMobile() {
 </script>
 
 <style scoped lang="scss">
-
 .sidebar-main-wrapper {
   display: flex;
   flex-direction: column;

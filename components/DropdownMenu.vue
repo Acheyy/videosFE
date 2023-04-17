@@ -3,7 +3,8 @@
   <div class="dropdown-menu" v-show="isVisible">
     <div class="user-top-sectio">
       <NuxtLink to="/user/profile" class="avatar">
-        <img :src="userInfo.avatar" />
+        <img :src="userInfo.avatar" v-if="userInfo.avatar" />
+        <img src="https://skbj.b-cdn.net/actors/strumfy.jpeg" v-else />
       </NuxtLink>
       <NuxtLink to="/user/profile" class="name">
         {{ userInfo.userName }}
@@ -37,7 +38,6 @@ const props = defineProps({
   isVisible: Boolean,
   userInfo: {},
   logout: Function,
-
 });
 </script>
 

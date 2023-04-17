@@ -2,7 +2,6 @@
   <Loading v-if="pending"></Loading>
   <div v-else>
     <h1 class="page-title">All Videos</h1>
-    <span>Page: {{ route.params.pageNumber }}</span>
     <div class="cards-wrapper">
       <VideoCard
         v-for="(video, index) in videos.videos"
@@ -15,19 +14,27 @@
         :actor="video.actor"
         :category="video.category"
         :views="video.views"
-        :likes="video.likes.length"
+        :likes="video.likes?.length"
         :snapshots="video.snapshots"
       ></VideoCard>
     </div>
-    <Pagination
-      :url="'/all-videos/'"
+    <QueryPagination
+      v-if="+videos.totalPages > 1"
       :totalPages="+(+videos.totalPages).toFixed(0)"
-      :currentPage="+route.params.pageNumber"
-    ></Pagination>
+      :currentPage="
+        router.currentRoute.value.query.page
+          ? +router.currentRoute.value.query.page
+          : 1
+      "
+    ></QueryPagination>
+
   </div>
 </template>
 
 <script setup>
+const route = useRoute();
+const router = useRouter();
+
 useHead({
   title: "Watch All Videos The Best Korean BJ Cam Girl Videos Online In High Quality - Skbj.TV",
   meta: [
@@ -45,12 +52,17 @@ useHead({
     ],
 })
 
-const route = useRoute();
 
-const videosPerPage = 100;
-const { pending, data: videos } = await useLazyFetch(
-  `http://localhost:3030/api/videos?limit=30&page=${route.params.pageNumber}`,
+
+const {
+  pending,
+  refresh,
+  data: videos,
+} = await useLazyFetch(
+  () =>
+    `http://localhost:3030/api/videos?limit=30&page=${router.currentRoute.value.query.page}`,
   {
+    server: false,
     onResponseError() {
       toast("There was an error! Click here to refresh the data!", {
         theme: "dark",
@@ -60,7 +72,6 @@ const { pending, data: videos } = await useLazyFetch(
         closeOnClick: false,
       });
     },
-    server: false,
   }
 );
 </script>

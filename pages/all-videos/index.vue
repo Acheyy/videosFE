@@ -19,7 +19,7 @@
       ></VideoCard>
     </div>
     <Pagination
-      :url="'/all-videos/'"
+      :url="'/videos/'"
       :totalPages="+(+videos.totalPages).toFixed(0)"
       :currentPage="1"
     ></Pagination>

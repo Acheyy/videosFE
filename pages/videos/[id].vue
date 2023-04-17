@@ -4,18 +4,8 @@
   <div v-else class="top-wrapper">
     <div class="main-video-wrapper">
       <div class="player-wrapper">
-        <IFRAME
-          :src="'https://sbhight.com/e/' + route.params.id + '.html'"
-          FRAMEBORDER="0"
-          MARGINWIDTH="0"
-          MARGINHEIGHT="0"
-          SCROLLING="NO"
-          WIDTH="640"
-          HEIGHT="360"
-          allowfullscreen
-        ></IFRAME>
         <!-- Enable premium video -->
-        <!-- <div class="premium-container">
+        <div v-if="video.tags.some((tag) => tag.name === 'vip') && !accountDetails.isUserPremium" class="premium-container">
           <img :src="video.thumbnail" />
           <div class="overlay">
             <div class="premium-wrapper">
@@ -32,7 +22,19 @@
               </div>
             </div>
           </div>
-        </div> -->
+        </div>
+        <IFRAME
+          :src="'https://sbhight.com/e/' + route.params.id + '.html'"
+          FRAMEBORDER="0"
+          MARGINWIDTH="0"
+          MARGINHEIGHT="0"
+          SCROLLING="NO"
+          WIDTH="640"
+          HEIGHT="360"
+          allowfullscreen
+          v-else
+        ></IFRAME>
+        
       </div>
       <div class="title">
         <h1>{{ video.name }}</h1>
@@ -157,6 +159,7 @@ const { isAccountLoggedIn, accountDetails } = storeToRefs(accountInfoStore);
 const route = useRoute();
 const cookieVideoId = useCookie("cookieVideoId");
 const title = ref("");
+const videoIdSEO = ref("");
 const actorName = ref("");
 const actorThumb = ref("");
 const videoThumb = ref("");
@@ -292,6 +295,7 @@ const {
       actorName.value = res.response._data.actor.name;
       videoThumb.value = res.response._data.thumbnail;
       likesCount.value = res.response._data.likes.length;
+      videoIdSEO.value = res.response._data.uploadID;
 
       // Set isLiked.value based on whether accountDetails._id is in the likes array
       isLiked.value = res.response._data.likes.includes(
@@ -369,6 +373,29 @@ onServerPrefetch(() => {
       },
       { name: "twitter:image", content: `${videoThumb.value}` },
     ],
+    script: [
+      {
+        type: "application/ld+json",
+        json: {
+          "@context": "https://schema.org",
+          "@type": "VideoObject",
+          name: title.value,
+          description: `Watch ${title.value} BJ video online. Free Sexy Korean BJ in high quality.`,
+          thumbnailUrl: videoThumb.value,
+          embedUrl: `https://sbhight.com/e/${videoIdSEO.value}.html`, // Replace 'videoId' with the appropriate value
+          publisher: {
+            "@type": "Organization",
+            name: "Skbj.TV",
+            logo: {
+              "@type": "ImageObject",
+              url: "http://localhost:3030/images/skbjlogo.png", // Replace with the actual logo URL
+              width: 633,
+              height: 191,
+            },
+          },
+        },
+      },
+    ],
   });
 });
 const hasUpdatedOnce = ref(false);
@@ -428,6 +455,29 @@ onMounted(() => {
         },
         { name: "twitter:image", content: `${videoThumb.value}` },
       ],
+      script: [
+        {
+          type: "application/ld+json",
+          json: {
+            "@context": "https://schema.org",
+            "@type": "VideoObject",
+            name: title.value,
+            description: `Watch ${title.value} BJ video online. Free Sexy Korean BJ in high quality.`,
+            thumbnailUrl: videoThumb.value,
+            embedUrl: `https://sbhight.com/e/${videoIdSEO.value}.html`, // Replace 'videoId' with the appropriate value
+            publisher: {
+              "@type": "Organization",
+              name: "Skbj.TV",
+              logo: {
+                "@type": "ImageObject",
+                url: "http://localhost:3030/images/skbjlogo.png", // Replace with the actual logo URL
+                width: 633,
+                height: 191,
+              },
+            },
+          },
+        },
+      ],
     });
   }
 });
@@ -478,7 +528,6 @@ const { pending: pendingRecommended, data: videosRecommended } =
         height: 100%;
         margin-left: auto;
         margin-right: auto;
-        overflow: hidden;
         display: block;
         top: 0;
         right: 0;
@@ -493,6 +542,7 @@ const { pending: pendingRecommended, data: videosRecommended } =
       .premium-container {
         img {
           width: 100%;
+          height: 100%;
         }
 
         .overlay {

@@ -17,7 +17,7 @@
         </NuxtLink>
       </div>
       <!-- <Pagination
-          :url="'/all-videos/'"
+          :url="'/videos/'"
           :totalPages="+(+videos.result.results_total / 100).toFixed(0)"
           :currentPage="1"
         ></Pagination> -->

@@ -18,7 +18,7 @@ import { toast } from "vue3-toastify";
 
 const rules = computed(() => {
   return {
-    nameInput: { required, minLength: minLength(4) },
+    nameInput: { required, minLength: minLength(3) },
   };
 });
 const formData = reactive({ nameInput: "" });
@@ -26,6 +26,7 @@ const v$ = useVuelidate(rules, formData);
 
 async function submitVideo() {
   v$.value.$validate();
+  console.log(v$.value)
   if (!v$.value.$error) {
     await $fetch(`http://localhost:3030/api/tags`, {
       method: "POST",

@@ -91,8 +91,8 @@ async function submitVideo() {
     await $fetch(`http://localhost:3030/api/users`, {
       method: "POST",
       body: {
-        userName: sanitizeduserName,
-        email: sanitizedemail,
+        userName: sanitizeduserName.replace(/\s+/g, ''),
+        email: sanitizedemail.toLowerCase().replace(/\s+/g, ''),
         password: sanitizedpassword,
       },
       async onResponse(res) {
