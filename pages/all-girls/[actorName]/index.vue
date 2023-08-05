@@ -1,15 +1,22 @@
 <template>
-  <Loading v-if="pending || pendingActor"></Loading>
-  <div v-else>
+  <div>
     <h1 class="page-title">
       <span class="strong"> {{ route.params.actorName }} </span> Videos
     </h1>
-    <div class="image-wrapper">
-      <img :src="actor.thumbnail" :alt="actor.name" :title="actor.name" />
+    <div class="image-wrapper" v-if="pendingActor">
+      <img class="placeholrder-img" />
     </div>
-    <h2 style="text-align: center; margin-bottom: 20px;">Total videos: {{ actor.totalVideos }}</h2>
+    <div class="image-wrapper" v-else>
+      <img :src="actor?.thumbnail" :alt="actor?.name" :title="actor?.name" />
+    </div>
+    <h2 style="text-align: center; margin-bottom: 20px" v-if="pendingActor">
+      Total videos: Loading..
+    </h2>
+    <h2 style="text-align: center; margin-bottom: 20px" v-else>
+      Total videos: {{ actor?.totalVideos }}
+    </h2>
 
-    <div class="sort-wrapper" v-if="actor.totalVideos > 5">
+    <div class="sort-wrapper" v-if="!pendingActor && actor?.totalVideos > 5">
       <div
         class="date-sort"
         @click="sorVideos('date')"
@@ -24,8 +31,28 @@
       >
         Most popular
       </div>
+      <div
+        class="likes-sort"
+        @click="sorVideos('likes')"
+        :class="{ active: videoOrder == 'likes' }"
+      >
+        Most Liked
+      </div>
+      <div
+        class="vip-sort"
+        @click="sorVideos('vip')"
+        :class="{ active: videoOrder == 'vip' }"
+      >
+        VIP
+      </div>
     </div>
-    <div class="cards-wrapper">
+    <div class="cards-wrapper" v-if="pending">
+      <VideoCardLoading
+        v-for="index in Array.from({ length: 30 }, (v, k) => k + 1)"
+        :key="index"
+      ></VideoCardLoading>
+    </div>
+    <div class="cards-wrapper" v-else>
       <VideoCard
         v-for="(video, index) in videos.videos"
         :key="index"
@@ -39,10 +66,11 @@
         :views="video.views"
         :likes="video.likes?.length"
         :snapshots="video.snapshots"
+        :isVIP="video.tags.includes('643adac05767bb0f8517fec8')"
       ></VideoCard>
     </div>
     <QueryPagination
-      v-if="+videos.totalPages > 1"
+      v-if="+videos?.totalPages > 1 && !pending"
       :totalPages="+(+videos.totalPages).toFixed(0)"
       :currentPage="
         router.currentRoute.value.query.page
@@ -60,6 +88,7 @@ const router = useRouter();
 const actorName = ref("");
 const actorThumb = ref("");
 const videoOrder = ref("date");
+const queryObject = ref({ ...router.currentRoute.value.query });
 
 const { pendingActor, data: actor } = await useLazyFetch(
   `http://localhost:3030/api/actors/${route.params.actorName}`,
@@ -86,9 +115,29 @@ const {
   }
 );
 
+// async function sorVideos(order) {
+//   videoOrder.value = order;
+//   router.currentRoute.value.query.page = 1;
+//   router.replace({ path: `${route.path}`, query: { page: 1 } });
+//   refresh();
+// }
+
+watch(videoOrder, async (newValue) => {
+  // Update the query object
+  queryObject.value.orderBy = newValue;
+  queryObject.value.page = 1;
+
+  // Update the query parameters in the address bar using the 'replace' method
+  await router.replace({
+    path: router.currentRoute.value.path,
+    query: queryObject.value,
+  });
+
+  refresh();
+});
+
 async function sorVideos(order) {
   videoOrder.value = order;
-  refresh();
 }
 
 onServerPrefetch(() => {
@@ -189,6 +238,11 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
+.placeholrder-img {
+  width: 400px;
+  height: 400px;
+  background-color: #131313;
+}
 .sort-wrapper {
   display: flex;
   align-items: center;
@@ -209,7 +263,17 @@ onMounted(() => {
     border-radius: 4px 4px 0 0;
     cursor: pointer;
   }
-  .popular-sort {
+  .popular-sort,
+  .likes-sort {
+    margin-left: 5px;
+    margin-right: 5px;
+    padding: 6px 8px;
+    border-radius: 4px 4px 0 0;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .vip-sort {
     margin-left: 5px;
     padding: 6px 8px;
     border-radius: 4px 4px 0 0;

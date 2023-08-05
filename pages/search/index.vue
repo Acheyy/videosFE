@@ -21,6 +21,7 @@
           :views="video.views"
           :likes="video.likes?.length"
           :snapshots="video.snapshots"
+          :isVIP="video.tags.includes('643adac05767bb0f8517fec8')"
         ></VideoCard>
       </div>
     </div>

@@ -7,6 +7,13 @@
       <NuxtLink to="/" class="logo">
         <IconsLogo></IconsLogo>
       </NuxtLink>
+      <NuxtLink
+        to="/free-premium"
+        class="logo secondary"
+        v-if="!accountDetails.isUserPremium"
+      >
+        <IconsFreePremium></IconsFreePremium>
+      </NuxtLink>
     </div>
     <div class="center">
       <form style="position: relative" onsubmit="return false">
@@ -67,7 +74,8 @@ const route = useRoute();
 const sidebarStore = useSidebarStore();
 const searchStore = useSearchStore();
 const accountInfoStore = useAccountInfo();
-const { accountDetails } = storeToRefs(accountInfoStore);
+const { isAccountLoggedIn, accountDetails } = storeToRefs(accountInfoStore);
+
 let searchInput = ref("");
 
 function isLetter(key) {
@@ -198,6 +206,18 @@ const submitSearch = () => {
 
     svg {
       fill: #ffffff;
+    }
+
+    &.secondary {
+      margin-left: 10px;
+      width: 115px !important;
+      font-weight: 600;
+    }
+
+    @media only screen and (max-width: 660px) {
+      &.secondary {
+        display: none;
+      }
     }
   }
 

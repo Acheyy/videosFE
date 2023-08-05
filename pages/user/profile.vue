@@ -2,20 +2,18 @@
   <div v-if="isAccountLoggedIn">
     <div class="profile-section">
       <div class="left-side">
-        <img :src="accountDetails.avatar" />
+        <img :src="accountDetails.avatar" v-if="accountDetails.avatar" />
+        <img v-else src="https://skbj.b-cdn.net/actors/strumfy.jpeg" />
       </div>
       <div class="right-side">
         <div>Username: {{ accountDetails.userName }}</div>
         <div>Email: {{ accountDetails.email }}</div>
-        <div>Is Account Premium: {{ accountDetails.isUserPremium }}</div>
+        <div>Is Account VIP: {{ accountDetails.isUserPremium }}</div>
         <UpgradeToPremiumButton
           v-if="!accountDetails.isUserPremium"
         ></UpgradeToPremiumButton>
-        <div
-          style="margin-top: 10px"
-          v-if="accountDetails.isUserPremium"
-        >
-          Premium Expires:
+        <div style="margin-top: 10px" v-if="accountDetails.isUserPremium">
+          VIP Expires:
           {{ $timeAgo.format(new Date(accountDetails?.premiumExpiry)) }}
         </div>
       </div>
@@ -38,9 +36,20 @@
           :views="video.views"
           :likes="video.likes?.length"
           :snapshots="video.snapshots"
+          :isVIP="video.tags.includes('643adac05767bb0f8517fec8')"
+
         ></VideoCard>
       </div>
-      <div v-else style="margin-top: 20px">No liked videos..</div>
+      <div v-else style="margin-top: 20px">
+        No liked videos.. <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+      </div>
     </div>
 
     <Loading v-if="pending"></Loading>
@@ -60,9 +69,27 @@
           :views="video.views"
           :likes="video.likes?.length"
           :snapshots="video.snapshots"
+          :isVIP="video.tags.includes('643adac05767bb0f8517fec8')"
+
         ></VideoCard>
       </div>
-      <div v-else style="margin-top: 20px">No videos in the history..</div>
+      <div v-else style="margin-top: 20px">
+        No videos in the history..
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+      </div>
     </div>
   </div>
   <div v-else>

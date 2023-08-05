@@ -1,120 +1,19 @@
 <template>
-  <NuxtLink
-    :to="'/videos/' + uploadID"
-    class="card-wrapper"
-    :title="name"
-    :alt="name"
-    @mouseenter="startThumbnailLoop"
-    @mouseleave="stopThumbnailLoop"
-    @touchstart="startThumbnailLoop"
-    @touchend="stopThumbnailLoop"
-  >
-    <div class="thumnail">
-      <nuxt-img
-        format="webp"
-        :src="currentThumbnail + '?width=275'"
-        loading="lazy"
-        :title="name"
-        :alt="name"
-      />
-      <div class="duration-wrapper">
-        {{ $timeFormat(duration) }}
-      </div>
-      <div class="vip" v-if="isVIP" alt="VIP" title="VIP">
-        <IconsCrown></IconsCrown>
-      </div>
-    </div>
+  <div class="card-wrapper">
+    <div class="thumnail"></div>
     <div class="details">
-      <div class="avatar">
-        <img
-          format="webp"
-          :src="actor.thumbnail + '?width=40'"
-          loading="lazy"
-          :title="actor.name"
-          :alt="actor.name"
-        />
-      </div>
+      <div class="avatar"></div>
       <div class="main-details">
-        <div class="main-title">{{ name }}</div>
+        <div class="main-title"></div>
         <div class="meta-info">
-          <div class="meta-category">{{ category.name }}</div>
+          <div class="meta-category"></div>
           <div class="meta-details">
-            {{ views?.views }} views * {{ $timeAgo.format(new Date(date)) }}
-            <br />
-
-            {{ getLikesText(likes) }}
           </div>
         </div>
       </div>
     </div>
-  </NuxtLink>
+  </div>
 </template>
-
-<script setup>
-const {
-  snapshots,
-  uploadID,
-  thumbnail,
-  duration,
-  name,
-  date,
-  actor,
-  category,
-  views,
-  likes,
-  isVIP,
-} = defineProps({
-  snapshots: Array,
-  uploadID: String,
-  thumbnail: String,
-  duration: Number,
-  likes: Number,
-  name: String,
-  date: String,
-  actor: Object,
-  category: Object,
-  views: Object,
-  isVIP: Boolean,
-});
-
-let currentThumbnail = ref(thumbnail);
-let thumbnailInterval;
-
-const startThumbnailLoop = () => {
-  if (date <= "2023-07-26T00:19:34.582Z") {
-    // Check if snapshots exists and has at least one element
-    if (!snapshots || snapshots.length === 0) {
-      return;
-    }
-
-    if (thumbnailInterval) {
-      clearInterval(thumbnailInterval);
-    }
-    let index = 1;
-    thumbnailInterval = setInterval(() => {
-      currentThumbnail.value = snapshots[index] + "?width=275";
-      index = (index + 1) % snapshots.length;
-    }, 700);
-  } else {
-    currentThumbnail.value = `https://vz-faaf5b6e-df7.b-cdn.net/${uploadID}/preview.webp`
-  }
-};
-
-const stopThumbnailLoop = () => {
-  clearInterval(thumbnailInterval);
-  currentThumbnail.value = thumbnail;
-};
-
-function getLikesText(likes) {
-  if (likes === null || likes === 0 || likes === undefined) {
-    return "Nobody liked :(";
-  } else if (likes === 1) {
-    return "1 like";
-  } else {
-    return `${likes} likes`;
-  }
-}
-</script>
 
 <style scoped lang="scss">
 .sidebar-wrapper {
@@ -131,15 +30,14 @@ function getLikesText(likes) {
   transition-timing-function: ease-in-out;
   border-radius: 8px;
 
-  &:hover {
-    background-color: #272727;
-  }
 
   .thumnail {
     width: 100%;
     display: block;
     position: relative;
     flex: none;
+    background-color: rgb(0, 0, 0);
+    border-radius: 8px;
 
     &::before {
       display: block;
@@ -165,21 +63,14 @@ function getLikesText(likes) {
       object-fit: contain;
       background-color: black;
     }
-
-    .duration-wrapper {
-      font-size: 12px;
-      position: absolute;
-      bottom: 4px;
-      right: 4px;
-      background-color: #000;
-      padding: 2px 4px;
-    }
   }
   .details {
     display: flex;
     padding-right: 24px;
 
     .main-title {
+      background-color: #131313;
+      border-radius: 3px;
       color: #f1f1f1;
       margin: 12px 0 4px 0;
       font-size: 16px;
@@ -192,6 +83,8 @@ function getLikesText(likes) {
       -webkit-box-orient: vertical;
       text-overflow: ellipsis;
       white-space: normal;
+      height: 44px;
+      width: 100px;
     }
     .meta-info {
       display: flex;
@@ -199,6 +92,19 @@ function getLikesText(likes) {
       font-size: 14px;
       color: #aaa;
       line-height: 20px;
+
+      .meta-category {
+        height: 20px;
+        background-color: #131313;
+        border-radius: 3px;
+        width: 70px;
+      }
+      .meta-details {
+        height: 40px;
+        background-color: #131313;
+        border-radius: 3px;
+        width: 40px;
+      }
     }
     .avatar img {
       height: 36px;

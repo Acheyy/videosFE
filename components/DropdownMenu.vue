@@ -20,7 +20,7 @@
       style="margin-top: 10px"
       v-if="isAccountLoggedIn && accountDetails.isUserPremium"
     >
-      Premium Expires:
+      VIP Expires:
       {{ $timeAgo.format(new Date(accountDetails?.premiumExpiry)) }}
     </div>
   </div>

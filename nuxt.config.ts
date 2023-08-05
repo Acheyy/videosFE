@@ -22,5 +22,5 @@ export default defineNuxtConfig({
     },
   },
   css: ["@/assets/css/_reset.scss", "@/assets/css/_main.scss"],
-  modules: ["@pinia/nuxt", '@nuxt/image-edge'],
+  modules: ["@pinia/nuxt", "@nuxt/image-edge"],
 });

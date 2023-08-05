@@ -1,34 +1,34 @@
 <template>
   <div class="footer-wrapper">
     <div class="links-container">
-      <a
+      <NuxtLink
         class="link"
-        href="https://theporndude.com"
-        target="_blank"
-        rel="nofollow"
+        to="/dmca"
       >
-        <img src="/images/tpd.ico" />
-        ThePornDude</a
+        DMCA</NuxtLink
       >
-    </div>
-    <div>
-      <div class="website-message">
-        !! Website is being built.. <br />
-        Some functionalities might not work properly <br />
-        Please use the contact if you have any trouble
-      </div>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.website-message {
+.articles-wrapper {
+  margin-top: 40px;
+}
+.article {
+  max-width: 800px;
   margin: 0 auto;
+  margin-bottom: 20px;
+  line-height: 20px;
   text-align: center;
-  font-size: 18px;
-  color: red;
-  padding: 10px;
-  margin-top: 20px;
+  h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  p {
+    margin-bottom: 20px;
+  }
 }
 .footer-wrapper {
   color: #fff;

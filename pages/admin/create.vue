@@ -129,7 +129,7 @@ async function captureThumbnail(videoFile, time) {
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       canvas.toBlob((blob) => {
         resolve(blob);
-      }, "image/jpeg");
+      }, "image/webp");
     });
 
     video.src = URL.createObjectURL(videoFile);
@@ -159,6 +159,7 @@ async function submitVideo() {
   console.log(formData.values);
   // Get video duration
   const duration = await getVideoDuration(files.value[0]);
+  formData.append("duration", duration);
 
   // Calculate the times at which to capture the thumbnails based on percentages
   const captureTimes = [0.1, 0.3, 0.6, 0.8].map(
@@ -175,7 +176,7 @@ async function submitVideo() {
     formData.append(
       `thumbnail${index + 1}`,
       thumbnail,
-      `thumbnail${index + 1}.jpg`
+      `thumbnail${index + 1}.webp`
     );
   });
 

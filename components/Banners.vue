@@ -1,119 +1,61 @@
 <template>
-  <NuxtLink
-    :to="'/videos/' + uploadID"
+  <a
+    data-v-dc30061e=""
+    data-v-02281a80=""
+    href="https://l.hyenadata.com/s/25YR5q"
     class="card-wrapper"
-    :title="name"
-    :alt="name"
-    @mouseenter="startThumbnailLoop"
-    @mouseleave="stopThumbnailLoop"
-    @touchstart="startThumbnailLoop"
-    @touchend="stopThumbnailLoop"
-  >
-    <div class="thumnail">
-      <nuxt-img
-        format="webp"
-        :src="currentThumbnail + '?width=275'"
+    title="kbj23030731_dbdms139_20221221"
+    alt="kbj23030731_dbdms139_20221221"
+    target="_blank"
+    ><div data-v-dc30061e="" class="thumnail">
+      <img
+        data-v-dc30061e=""
+        :src="randomImg"
+        alt="kbj23030731_dbdms139_20221221"
         loading="lazy"
-        :title="name"
-        :alt="name"
+        data-nuxt-img=""
+        title="kbj23030731_dbdms139_20221221"
       />
-      <div class="duration-wrapper">
-        {{ $timeFormat(duration) }}
-      </div>
-      <div class="vip" v-if="isVIP" alt="VIP" title="VIP">
-        <IconsCrown></IconsCrown>
-      </div>
+      <div data-v-dc30061e="" class="duration-wrapper">AD</div>
     </div>
-    <div class="details">
-      <div class="avatar">
+    <div data-v-dc30061e="" class="details">
+      <div data-v-dc30061e="" class="avatar">
         <img
+          data-v-dc30061e=""
           format="webp"
-          :src="actor.thumbnail + '?width=40'"
+          src="https://skbj.b-cdn.net/actors/unknown.webp"
           loading="lazy"
-          :title="actor.name"
-          :alt="actor.name"
+          title="dbdms139"
+          alt="dbdms139"
         />
       </div>
-      <div class="main-details">
-        <div class="main-title">{{ name }}</div>
-        <div class="meta-info">
-          <div class="meta-category">{{ category.name }}</div>
-          <div class="meta-details">
-            {{ views?.views }} views * {{ $timeAgo.format(new Date(date)) }}
-            <br />
-
-            {{ getLikesText(likes) }}
+      <div data-v-dc30061e="" class="main-details">
+        <div data-v-dc30061e="" class="main-title">
+            체리테일 - 무료 뉴 헨타이 게임하기 Free Hentai Game
+        </div>
+        <div data-v-dc30061e="" class="meta-info">
+          <div data-v-dc30061e="" class="meta-category">CherryTale</div>
+          <div data-v-dc30061e="" class="meta-details">
+            Online Game
           </div>
         </div>
       </div>
-    </div>
-  </NuxtLink>
+    </div></a
+  >
 </template>
 
 <script setup>
-const {
-  snapshots,
-  uploadID,
-  thumbnail,
-  duration,
-  name,
-  date,
-  actor,
-  category,
-  views,
-  likes,
-  isVIP,
-} = defineProps({
-  snapshots: Array,
-  uploadID: String,
-  thumbnail: String,
-  duration: Number,
-  likes: Number,
-  name: String,
-  date: String,
-  actor: Object,
-  category: Object,
-  views: Object,
-  isVIP: Boolean,
-});
+const imgs = [
+  'https://skbj.b-cdn.net/random/cherryTale1.webp',
+  'https://skbj.b-cdn.net/random/cherrytale2.webp',
+  'https://skbj.b-cdn.net/random/cherrytale3.webp'
+]
 
-let currentThumbnail = ref(thumbnail);
-let thumbnailInterval;
+const randomImg = ref('') // This will hold the randomly selected image URL
 
-const startThumbnailLoop = () => {
-  if (date <= "2023-07-26T00:19:34.582Z") {
-    // Check if snapshots exists and has at least one element
-    if (!snapshots || snapshots.length === 0) {
-      return;
-    }
-
-    if (thumbnailInterval) {
-      clearInterval(thumbnailInterval);
-    }
-    let index = 1;
-    thumbnailInterval = setInterval(() => {
-      currentThumbnail.value = snapshots[index] + "?width=275";
-      index = (index + 1) % snapshots.length;
-    }, 700);
-  } else {
-    currentThumbnail.value = `https://vz-faaf5b6e-df7.b-cdn.net/${uploadID}/preview.webp`
-  }
-};
-
-const stopThumbnailLoop = () => {
-  clearInterval(thumbnailInterval);
-  currentThumbnail.value = thumbnail;
-};
-
-function getLikesText(likes) {
-  if (likes === null || likes === 0 || likes === undefined) {
-    return "Nobody liked :(";
-  } else if (likes === 1) {
-    return "1 like";
-  } else {
-    return `${likes} likes`;
-  }
-}
+onMounted(() => {
+  randomImg.value = imgs[Math.floor(Math.random() * imgs.length)]
+})
 </script>
 
 <style scoped lang="scss">

@@ -1,21 +1,7 @@
 <template>
   <div class="upload-wrapper" v-if="!isAccountLoggedIn">
     <div>
-      userName
-      <n-input
-        :theme="$darkTheme"
-        :theme-overrides="$themeOverrides"
-        class="text-input margin"
-        id="userName"
-        v-model:value="formData.userName"
-        type="text"
-        placeholder="UserName"
-        :status="v$.userName.$error ? 'error' : ''"
-      />
-      <div v-if="v$.userName.$error">UserName minimum 4 characters</div>
-    </div>
-    <div>
-      password
+      New password
       <n-input
         :theme="$darkTheme"
         :theme-overrides="$themeOverrides"
@@ -28,19 +14,16 @@
       />
       <div v-if="v$.password.$error">Password minimum 6 characters</div>
     </div>
-    <NuxtLink to="/forgot-password" style="margin-bottom: 20px;font-size: 12px;">Forgot password?</NuxtLink>
+
     <n-button
       :theme="$darkTheme"
       :theme-overrides="$themeOverrides"
       @click="login"
       :disabled="v$.$error"
     >
-      Submit
+      Reset password
     </n-button>
     <br />
-    <n-button :theme="$darkTheme" :theme-overrides="$themeOverrides" @click="goToRegister">
-       Register
-    </n-button>
   </div>
   <div v-else>Aleady logged in</div>
 </template>
@@ -54,14 +37,10 @@ import { useVuelidate } from "@vuelidate/core";
 
 const rules = computed(() => {
   return {
-    userName: { required, minLength: minLength(4) },
     password: { required, minLength: minLength(6) },
   };
 });
-const goToRegister = () => {
-  router.push({ path: `/register` });
-}
-const formData = reactive({ userName: "", password: "" });
+const formData = reactive({ password: "" });
 const v$ = useVuelidate(rules, formData);
 
 const themeOverrides = {
@@ -73,36 +52,35 @@ const themeOverrides = {
 const router = useRouter();
 const accountInfoStore = useAccountInfo();
 const { isAccountLoggedIn } = storeToRefs(accountInfoStore);
-const token = useCookie("token");
 
 async function login() {
   v$.value.$validate();
-  console.log(v$.value.userName.$error);
+  console.log(v$.value.password.$error);
   if (!v$.value.$error) {
-    await $fetch(`http://localhost:3030/api/users/login`, {
+    await $fetch(`http://localhost:3030/api/users/resetPassword`, {
       method: "POST",
       body: {
-        userName: formData.userName,
-        password: formData.password,
+        newPassword: formData.password,
+        token: router.currentRoute.value.query.token,
       },
-      onRequest() {
-        accountInfoStore.triggerAccountLoad(true);
-      },
+
       onResponse(res) {
         console.log(res);
         if (res.response.status === 200) {
-          token.value = res.response._data.accessToken;
-          accountInfoStore.updateAccountInfo(res.response._data.user);
-          accountInfoStore.triggerAccountLogin(true);
-          accountInfoStore.triggerAccountLoad(false);
-          router.push({ path: `/` });
+          router.push({ path: `/login` });
+          toast(`Your password was successfuly changed!`, {
+          theme: "dark",
+          type: "success",
+          autoClose: false,
+          toastClassName: "custom-wrapper error",
+          closeOnClick: false,
+        });
         } else {
-          accountInfoStore.triggerAccountLoad(false);
         }
       },
       onResponseError(err) {
         console.log(err);
-        toast(`There was an error! ${err.response._data}`, {
+        toast(`There was an error! ${err.response._data.error}`, {
           theme: "dark",
           type: "error",
           autoClose: false,

@@ -1,8 +1,15 @@
 <template>
-  <Loading v-if="pending || pendingRandom || pendingFantrie || pendingTwitch"></Loading>
-  <div v-else>
+  <!-- <Loading v-if="pending || pendingRandom || pendingFantrie || pendingTwitch"></Loading> -->
+  <div>
     <div class="cards-title">Most Recent:</div>
-    <div class="cards-wrapper">
+    <div class="cards-wrapper" v-if="pending">
+      <VideoCardLoading
+        v-for="index in Array.from({ length: 11 }, (v, k) => k + 1)"
+        :key="index"
+      ></VideoCardLoading>
+    </div>
+    <div v-else class="cards-wrapper">
+      <Banners v-if="!accountDetails.isUserPremium"></Banners>
       <VideoCard
         v-for="(video, index) in videos.videos"
         :key="index"
@@ -16,10 +23,17 @@
         :views="video.views"
         :likes="video.likes?.length"
         :snapshots="video.snapshots"
+        :isVIP="video.tags.includes('643adac05767bb0f8517fec8')"
       ></VideoCard>
     </div>
     <div class="cards-title margin-top">Fantrie:</div>
-    <div class="cards-wrapper">
+    <div class="cards-wrapper" v-if="pendingFantrie">
+      <VideoCardLoading
+        v-for="index in Array.from({ length: 10 }, (v, k) => k + 1)"
+        :key="index"
+      ></VideoCardLoading>
+    </div>
+    <div v-else class="cards-wrapper">
       <VideoCard
         v-for="(video, index) in videosFantrie.videos"
         :key="index"
@@ -33,10 +47,17 @@
         :views="video.views"
         :likes="video.likes?.length"
         :snapshots="video.snapshots"
+        :isVIP="video.tags.includes('643adac05767bb0f8517fec8')"
       ></VideoCard>
     </div>
     <div class="cards-title margin-top">Twitch:</div>
-    <div class="cards-wrapper">
+    <div class="cards-wrapper" v-if="pendingTwitch">
+      <VideoCardLoading
+        v-for="index in Array.from({ length: 10 }, (v, k) => k + 1)"
+        :key="index"
+      ></VideoCardLoading>
+    </div>
+    <div v-else class="cards-wrapper">
       <VideoCard
         v-for="(video, index) in videosTwitch.videos"
         :key="index"
@@ -50,10 +71,17 @@
         :views="video.views"
         :likes="video.likes?.length"
         :snapshots="video.snapshots"
+        :isVIP="video.tags.includes('643adac05767bb0f8517fec8')"
       ></VideoCard>
     </div>
     <div class="cards-title margin-top">Random:</div>
-    <div class="cards-wrapper">
+    <div class="cards-wrapper" v-if="pendingRandom">
+      <VideoCardLoading
+        v-for="index in Array.from({ length: 10 }, (v, k) => k + 1)"
+        :key="index"
+      ></VideoCardLoading>
+    </div>
+    <div v-else class="cards-wrapper">
       <VideoCard
         v-for="(video, index) in videosRandom"
         :key="index"
@@ -67,43 +95,73 @@
         :views="video.views"
         :likes="video.likes?.length"
         :snapshots="video.snapshots"
+        :isVIP="video.tags.includes('643adac05767bb0f8517fec8')"
       ></VideoCard>
     </div>
   </div>
 </template>
 
 <script setup>
+import { useAccountInfo } from "~/store/accountInfo";
+import { storeToRefs } from "pinia";
+const accountInfoStore = useAccountInfo();
+const { isAccountLoggedIn, accountDetails } = storeToRefs(accountInfoStore);
+
 import { toast } from "vue3-toastify";
 
 useHead({
-  title: "Watch The Best Korean BJ Cam Girl Videos Online In High Quality - Skbj.TV",
+  title:
+    "Watch The Best Korean BJ Cam Girl Videos Online In High Quality - Skbj.TV",
   meta: [
-      { charset: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { hid: "description", name: "description", content: "Watch The Best Korean BJ Cam Girl Videos Online In High Quality" },
-      { name: "format-detection", content: "telephone=no" },
-      { name: "referrer", content: "unsafe-url" },
-      { property: "og:locale", content: "en_US" },
-      { property: "og:title", content: "Watch The Best Korean BJ Cam Girl Videos Online In High Quality - Skbj.TV" },
-      {
-        property: "og:image",
-        hid: "og:image",
-        content: `http://localhost:3030/images/seo-image.jpg`,
-      },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
-      {
-        property: "og:image:alt",
-        content: `SKBJ Logo`,
-      },
-      { property: "og:site_name", content: "Skbj.TV" },
-      { property: "og:description", content: "Skbj.TV Official Page - Watch The Best Korean BJ Cam Girl Videos Online In High Quality" },
-      { name: "twitter:title", content: "Watch The Best Korean BJ Cam Girl Videos Online In High Quality - Skbj.TV" },
-      { name: "twitter:description", content: "Skbj.TV Official Page - Watch The Best Korean BJ Cam Girl Videos Online In High Quality" },
-      { name: "twitter:image", content: `http://localhost:3030/images/seo-image.jpg` },
-
-    ],
-})
+    { charset: "utf-8" },
+    { name: "viewport", content: "width=device-width, initial-scale=1" },
+    {
+      hid: "description",
+      name: "description",
+      content:
+        "Watch The Best Korean BJ Cam Girl Videos Online In High Quality",
+    },
+    { name: "format-detection", content: "telephone=no" },
+    { name: "referrer", content: "unsafe-url" },
+    { property: "og:locale", content: "en_US" },
+    {
+      property: "og:title",
+      content:
+        "Watch The Best Korean BJ Cam Girl Videos Online In High Quality - Skbj.TV",
+    },
+    {
+      property: "og:image",
+      hid: "og:image",
+      content: `http://localhost:3030/images/seo-image.jpg`,
+    },
+    { property: "og:image:width", content: "1200" },
+    { property: "og:image:height", content: "630" },
+    {
+      property: "og:image:alt",
+      content: `SKBJ Logo`,
+    },
+    { property: "og:site_name", content: "Skbj.TV" },
+    {
+      property: "og:description",
+      content:
+        "Skbj.TV Official Page - Watch The Best Korean BJ Cam Girl Videos Online In High Quality",
+    },
+    {
+      name: "twitter:title",
+      content:
+        "Watch The Best Korean BJ Cam Girl Videos Online In High Quality - Skbj.TV",
+    },
+    {
+      name: "twitter:description",
+      content:
+        "Skbj.TV Official Page - Watch The Best Korean BJ Cam Girl Videos Online In High Quality",
+    },
+    {
+      name: "twitter:image",
+      content: `http://localhost:3030/images/seo-image.jpg`,
+    },
+  ],
+});
 
 const { pending, data: videos } = await useLazyFetch(
   `http://localhost:3030/api/videos`,

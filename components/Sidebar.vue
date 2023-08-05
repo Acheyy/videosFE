@@ -47,6 +47,22 @@
       <span>All Categories</span>
     </NuxtLink>
     <div class="sidebar-separator"></div>
+    <a
+      class="link"
+      href="https://theporndude.com"
+      target="_blank"
+      rel="nofollow"
+    >
+      <img src="/images/tpd.ico" />
+      ThePornDude</a
+    >
+
+    <NuxtLink to="/free-premium" class="link" @click="closeSidebarMobile()">
+      <div class="icon">
+        <IconsCrown></IconsCrown>
+      </div>
+      <span>Free VIP</span>
+    </NuxtLink>
     <NuxtLink
       to="https://discord.gg/gCcUVYAaNE"
       target="_blank"
@@ -78,10 +94,12 @@
         style="margin-top: 10px"
         v-if="isAccountLoggedIn && accountDetails.isUserPremium"
       >
-        Premium Expires:
+        VIP Expires:
         {{ $timeAgo.format(new Date(accountDetails?.premiumExpiry)) }}
       </div>
     </client-only>
+    <div class="sidebar-separator"></div>
+    <SidebarActors></SidebarActors>
   </div>
 </template>
 
@@ -167,6 +185,11 @@ function closeSidebarMobile() {
     align-items: center;
     border-radius: 10px;
 
+    img {
+      max-width: 24px;
+      margin-right: 20px;
+    }
+
     &:hover {
       background-color: #272727;
     }
@@ -181,6 +204,7 @@ function closeSidebarMobile() {
 
 .sidebar-separator {
   margin: 16px 0;
+  padding: 0.5px;
   width: 100%;
   height: 1px;
   background-color: #2e2e2e;

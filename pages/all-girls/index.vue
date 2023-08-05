@@ -1,15 +1,32 @@
 <template>
-  <Loading v-if="pending"></Loading>
-  <div v-else>
+  <!-- <Loading v-if="pending"></Loading> -->
+  <div>
     <h1 class="page-title">All Girls</h1>
     <div class="girls-wrapper">
-      <NuxtLink
+      <div href="aaa" class="card-wrapper" v-if="!accountDetails.isUserPremium">
+        <div class="thumnail">
+          <BannerActors></BannerActors>
+        </div>
+      </div>
+      <NuxtLink v-if="pending"
         :to="'/all-girls/' + actor.slug"
         class="card-wrapper"
-        v-for="(actor) in actorsData"
+        v-for="actor in actorsData"
       >
         <div class="thumnail">
-          <img :src="actor.thumbnail" />
+        </div>
+        <div class="text">
+          <div class="title">{{ actor.name }}</div>
+          <div class="title">Total Videos: {{ actor.totalVideos }}</div>
+        </div>
+      </NuxtLink>
+      <NuxtLink v-else
+        :to="'/all-girls/' + actor.slug"
+        class="card-wrapper"
+        v-for="actor in actorsData"
+      >
+        <div class="thumnail">
+          <img :src="actor?.thumbnail" />
         </div>
         <div class="text">
           <div class="title">{{ actor.name }}</div>
@@ -26,24 +43,43 @@
 </template>
 
 <script setup>
+import { useAccountInfo } from "~/store/accountInfo";
+import { storeToRefs } from "pinia";
+const accountInfoStore = useAccountInfo();
+const { isAccountLoggedIn, accountDetails } = storeToRefs(accountInfoStore);
+
 import { toast } from "vue3-toastify";
 
 useHead({
-  title: "Watch All Girls The Best Korean BJ Cam Girl Videos Online In High Quality - Skbj.TV",
+  title:
+    "Watch All Girls The Best Korean BJ Cam Girl Videos Online In High Quality - Skbj.TV",
   meta: [
-      { charset: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { hid: "description", name: "description", content: "Watch The Best Korean BJ Cam Girl Videos Online In High Quality" },
-      { name: "format-detection", content: "telephone=no" },
-      { name: "referrer", content: "unsafe-url" },
-      { property: "og:locale", content: "en_US" },
-      { property: "og:title", content: "Skbj.TV" },
-      { property: "og:site_name", content: "Skbj.TV" },
-      { property: "og:description", content: "Skbj.TV Official Page - Watch The Best Korean BJ Cam Girl Videos Online In High Quality" },
-      { name: "twitter:title", content: "Skbj.TV" },
-      { name: "twitter:description", content: "Skbj.TV Official Page - Watch The Best Korean BJ Cam Girl Videos Online In High Quality" },
-    ],
-})
+    { charset: "utf-8" },
+    { name: "viewport", content: "width=device-width, initial-scale=1" },
+    {
+      hid: "description",
+      name: "description",
+      content:
+        "Watch The Best Korean BJ Cam Girl Videos Online In High Quality",
+    },
+    { name: "format-detection", content: "telephone=no" },
+    { name: "referrer", content: "unsafe-url" },
+    { property: "og:locale", content: "en_US" },
+    { property: "og:title", content: "Skbj.TV" },
+    { property: "og:site_name", content: "Skbj.TV" },
+    {
+      property: "og:description",
+      content:
+        "Skbj.TV Official Page - Watch The Best Korean BJ Cam Girl Videos Online In High Quality",
+    },
+    { name: "twitter:title", content: "Skbj.TV" },
+    {
+      name: "twitter:description",
+      content:
+        "Skbj.TV Official Page - Watch The Best Korean BJ Cam Girl Videos Online In High Quality",
+    },
+  ],
+});
 
 const { pending, data: actorsData } = await useLazyFetch(
   `http://localhost:3030/api/actors`,
@@ -97,5 +133,4 @@ const { pending, data: actorsData } = await useLazyFetch(
     overflow: hidden;
   }
 }
-
 </style>

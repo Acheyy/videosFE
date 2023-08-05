@@ -4,12 +4,23 @@
     <Header> </Header>
     <Sidebar></Sidebar>
     <div class="main-content" :class="{ full: !showSidebar }">
+      <!-- <div class="notification-banner">
+        <p>
+          There is an error with PayPal payments. The payments will not go
+          through. Working on fixing it as soon as possible!!
+        </p>
+        <p>
+          페이팔 결제에 오류가 있습니다. 지불이 안 된다. 가능한 한 빨리 수리하는
+          작업!!
+        </p>
+      </div> -->
       <Breadcrumb></Breadcrumb>
       <div>
         <slot></slot>
       </div>
       <Footer></Footer>
     </div>
+    <Footer2></Footer2>
   </div>
 </template>
 
@@ -43,6 +54,17 @@ const { showSidebar } = storeToRefs(sidebarStore);
 
   &.full {
     margin-left: 0 !important;
+  }
+}
+
+.notification-banner {
+  background-color: #341818;
+  border: 1px solid red;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  p {
+    margin-top: 10px;
   }
 }
 
