@@ -23,6 +23,9 @@
       <div class="vip" v-if="isVIP" alt="VIP" title="VIP">
         <IconsCrown></IconsCrown>
       </div>
+      <div class="coins" v-if="cost > 0 && !accountDetails?.purchasedVideos?.includes(videoId)">
+        {{ cost }} <IconsCoin></IconsCoin>
+      </div>
     </div>
     <div class="details">
       <div class="avatar">
@@ -63,6 +66,9 @@ const {
   views,
   likes,
   isVIP,
+  cost,
+  accountDetails,
+  videoId
 } = defineProps({
   snapshots: Array,
   uploadID: String,
@@ -75,6 +81,9 @@ const {
   category: Object,
   views: Object,
   isVIP: Boolean,
+  cost: Number,
+  accountDetails: Object,
+  videoId: String
 });
 
 let currentThumbnail = ref(thumbnail);
@@ -96,7 +105,7 @@ const startThumbnailLoop = () => {
       index = (index + 1) % snapshots.length;
     }, 700);
   } else {
-    currentThumbnail.value = `https://vz-faaf5b6e-df7.b-cdn.net/${uploadID}/preview.webp`
+    currentThumbnail.value = `https://vz-faaf5b6e-df7.b-cdn.net/${uploadID}/preview.webp`;
   }
 };
 
@@ -226,6 +235,37 @@ function getLikesText(likes) {
   border: 2px solid #fff;
 }
 
+.coins {
+  position: absolute;
+    top: 6px;
+    right: 6px;
+    background-color: #ffffff;
+    padding: 4px 10px;
+    display: flex;
+    align-items: center;
+    border-radius: 6px;
+    color: #cdad00;
+    border: 1px solid gold;
+
+
+  img {
+    background-color: initial !important;
+    width: 30px !important;
+    position: initial !important;
+    height: initial !important;
+    margin-left: 6px !important;
+    margin-right: initial !important;
+    overflow: initial !important;
+    display: initial !important;
+    top: initial !important;
+    right: initial !important;
+    bottom: initial !important;
+    left: initial !important;
+    border-radius: initial !important;
+    object-fit: initial !important;
+  }
+}
+
 @media only screen and (max-width: 1970px) {
   .card-wrapper {
     width: calc(20% - 16px);
@@ -265,7 +305,7 @@ function getLikesText(likes) {
 @media only screen and (max-width: 480px) {
   .card-wrapper {
     width: 100%;
-    padding: 2px;
+    padding: 0;
     margin: 2px 2px 10px 2px;
   }
 }

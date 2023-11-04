@@ -57,7 +57,7 @@
   });
   
   const { pending, data: categoryData } = await useLazyFetch(
-    `http://localhost:3030/api/tags`,
+    `https://skbj.tv/api/tags`,
     {
       onResponseError() {
         toast("There was an error! Click here to refresh the data!", {

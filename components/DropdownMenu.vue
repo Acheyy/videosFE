@@ -1,7 +1,7 @@
 <!-- components/DropdownMenu.vue -->
 <template>
   <div class="dropdown-menu" v-show="isVisible">
-    <div class="user-top-sectio">
+    <div class="user-top-sectio" v-if="isAccountLoggedIn">
       <NuxtLink to="/user/profile" class="avatar">
         <img :src="userInfo.avatar" v-if="userInfo.avatar" />
         <img src="https://skbj.b-cdn.net/actors/strumfy.jpeg" v-else />
@@ -23,6 +23,14 @@
       VIP Expires:
       {{ $timeAgo.format(new Date(accountDetails?.premiumExpiry)) }}
     </div>
+    <div
+      class="available-coins"
+      style="margin-top: 10px"
+      v-if="isAccountLoggedIn && accountDetails.isUserPremium"
+    >
+      Available Coins: <IconsCoin></IconsCoin>
+      {{ accountDetails.credit }}
+    </div>
   </div>
 </template>
 
@@ -42,6 +50,9 @@ const props = defineProps({
 </script>
 
 <style lang="scss" scoped>
+.available-coins img {
+  max-width: 20px;
+}
 .logout-button {
   margin-top: 4px;
   width: 100%;

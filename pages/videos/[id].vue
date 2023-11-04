@@ -1,7 +1,14 @@
 <template>
+  <!-- <button @click="deleteMany()">Delete</button> -->
   <div class="top-wrapper">
-    <div class="main-video-wrapper">
+    <div class="main-video-wrapper" v-if="!video.cost">
       <div class="player-wrapper">
+        <div v-if="showAd && !accountDetails.isUserPremium" class="add-juicy">
+          <div class="close" @click="hideAd">X</div>
+          <client-only>
+            <BannerVideoPlayer></BannerVideoPlayer>
+          </client-only>
+        </div>
         <!-- Enable premium video -->
         <div
           v-if="
@@ -37,7 +44,10 @@
         <div v-else>
           <div>
             <iframe
-              :src="'https://iframe.mediadelivery.net/embed/141502/' + route.params.id"
+              :src="
+                'https://iframe.mediadelivery.net/embed/141502/' +
+                route.params.id
+              "
               loading="lazy"
               style="
                 border: none;
@@ -85,7 +95,7 @@
             ></IFRAME>
             <PremiumPlayer
               v-if="sourceVIP"
-              :source="'https://skbjvid.b-cdn.net/videos/' + video.fileName"
+              :source="secureVideoUrl"
             ></PremiumPlayer>
           </div>
           <div class="players-selection">
@@ -93,14 +103,20 @@
             <div
               class="player-source"
               @click="changeToHide"
-              v-if="video.createdAt >= '2023-05-02T05:55:10.089+00:00' && video.createdAt <= '2023-07-26T00:19:34.582Z'"
+              v-if="
+                video.createdAt >= '2023-05-02T05:55:10.089+00:00' &&
+                video.createdAt <= '2023-07-26T00:19:34.582Z'
+              "
             >
               Source 2
             </div>
             <div
               class="player-source"
               @click="changeToWish"
-              v-if="video.createdAt >= '2023-05-10T06:08:02.528+00:00' && video.createdAt <= '2023-07-26T00:19:34.582Z'"
+              v-if="
+                video.createdAt >= '2023-05-10T06:08:02.528+00:00' &&
+                video.createdAt <= '2023-07-26T00:19:34.582Z'
+              "
             >
               Source 3
             </div>
@@ -234,6 +250,340 @@
             :views="video.views"
             :likes="video.likes?.length"
             :snapshots="video.snapshots"
+            :cost="video.cost"
+            :isVIP="video.tags.includes('643adac05767bb0f8517fec8')"
+          ></VideoCard>
+        </div>
+        <h1 class="page-title" style="margin-top: 20px">Recent Videos</h1>
+        <div class="cards-wrapper" v-if="pendingRecommended3">
+          <VideoCardLoading
+            v-for="index in Array.from({ length: 10 }, (v, k) => k + 1)"
+            :key="index"
+          ></VideoCardLoading>
+        </div>
+        <div class="cards-wrapper" v-else>
+          <VideoCard
+            v-for="(video, index) in videosRecommended3.videos"
+            :key="index"
+            :uploadID="video.uploadID"
+            :thumbnail="video.thumbnail"
+            :duration="video.duration"
+            :name="video.name"
+            :date="video.createdAt"
+            :actor="video.actor"
+            :category="video.category"
+            :views="video.views"
+            :likes="video.likes?.length"
+            :snapshots="video.snapshots"
+            :cost="video.cost"
+            :isVIP="video.tags.includes('643adac05767bb0f8517fec8')"
+          ></VideoCard>
+        </div>
+      </client-only>
+      <br />
+      <br />
+      <!-- <div v-if="isAccountLoggedIn">
+        Write a comment:
+        <n-input
+          :theme="$darkTheme"
+          :theme-overrides="$themeOverrides"
+          v-model:value="formData.commentBody"
+          type="textarea"
+          placeholder="Write a comment..."
+        />
+        <n-button
+          :theme="$darkTheme"
+          :theme-overrides="$themeOverrides"
+          @click="writeComment"
+        >
+          Comment
+        </n-button>
+        <br />
+        Note: Reply to reply is not yet shown
+      </div>
+      <div v-else>
+        <NuxtLink to="/login">Login</NuxtLink> to write a comment
+      </div>
+      <br />
+      <br />
+      <Comment :comment="comment" v-for="(comment, index) in comments">
+        <Comment
+          :comment="reply"
+          v-for="(reply, index) in comment.replies"
+        ></Comment>
+      </Comment> -->
+    </div>
+    <div class="main-video-wrapper" v-if="video.cost > 0">
+      <div class="player-wrapper">
+        <!-- Enable premium video -->
+        <div
+          v-if="
+            video.cost > 0 &&
+            !accountDetails.purchasedVideos.includes(video._id)
+          "
+          class="premium-container"
+        >
+          <img
+            :src="video.thumbnail"
+            :alt="video.name"
+            style="filter: blur(25px)"
+          />
+
+          <div class="overlay">
+            <div class="premium-wrapper">
+              <div class="premium-message">
+                You can purchase this video for {{ video.cost }} coins
+                <br /><br />
+                <!-- {{ video.cost }} Coins = {{ video.cost / 10 }}$ <br /> -->
+                100 Coins = 10$ <br />
+                Your current Coins: {{ accountDetails.credit }}
+                <!-- <div style="margin-top: 4px" v-if="!isAccountLoggedIn">
+                  (5$ / 30 days) 
+                </div> -->
+              </div>
+              <PurchaseCredits
+                v-if="isAccountLoggedIn && accountDetails.credit < video.cost"
+              ></PurchaseCredits>
+              <div v-else-if="isAccountLoggedIn">
+                <button
+                  class="purchase-button-link"
+                  v-if="!purchaseClicked"
+                  @click="purchaseClicked = true"
+                >
+                  Purchase Video
+                </button>
+                <div v-else>
+                  Are you sure?
+                  <button class="purchase-button-link" @click="purchaseVideo">
+                    Yes
+                  </button>
+                  <button
+                    class="purchase-button-link red-btt"
+                    @click="purchaseClicked = false"
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
+              <div v-if="!isAccountLoggedIn">
+                Please <NuxtLink to="/register">create an account</NuxtLink> and
+                purchase Coins <br /><br />
+                Or go to <NuxtLink to="/login">Login</NuxtLink>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-else>
+          <div>
+            <iframe
+              :src="
+                'https://iframe.mediadelivery.net/embed/141502/' +
+                route.params.id
+              "
+              loading="lazy"
+              style="
+                border: none;
+                position: absolute;
+                top: 0;
+                height: 100%;
+                width: 100%;
+              "
+              allow="accelerometer; gyroscope; encrypted-media; picture-in-picture;"
+              allowfullscreen="true"
+              v-if="sourceSB && video.createdAt > '2023-07-26T00:19:34.582Z'"
+            ></iframe>
+            <IFRAME
+              :src="'https://sbhight.com/e/' + route.params.id + '.html'"
+              FRAMEBORDER="0"
+              MARGINWIDTH="0"
+              MARGINHEIGHT="0"
+              SCROLLING="NO"
+              WIDTH="640"
+              HEIGHT="360"
+              allowfullscreen
+              v-if="sourceSB && video.createdAt <= '2023-07-26T00:19:34.582Z'"
+            ></IFRAME>
+            <IFRAME
+              :src="'https://guccihide.com/e/' + video.uploadID2"
+              FRAMEBORDER="0"
+              MARGINWIDTH="0"
+              MARGINHEIGHT="0"
+              SCROLLING="NO"
+              WIDTH="640"
+              HEIGHT="360"
+              allowfullscreen
+              v-if="sourceHide && video.createdAt <= '2023-07-26T00:19:34.582Z'"
+            ></IFRAME>
+            <IFRAME
+              :src="'https://streamwish.to/e/' + video.uploadID3"
+              FRAMEBORDER="0"
+              MARGINWIDTH="0"
+              MARGINHEIGHT="0"
+              SCROLLING="NO"
+              WIDTH="640"
+              HEIGHT="360"
+              allowfullscreen
+              v-if="sourceWish && video.createdAt <= '2023-07-26T00:19:34.582Z'"
+            ></IFRAME>
+            <PremiumPlayer
+              v-if="sourceVIP"
+              :source="secureVideoUrl"
+            ></PremiumPlayer>
+          </div>
+          <div class="players-selection">
+            <div class="player-source" @click="changeToSB">Source 1</div>
+            <div
+              class="player-source"
+              @click="changeToHide"
+              v-if="
+                video.createdAt >= '2023-05-02T05:55:10.089+00:00' &&
+                video.createdAt <= '2023-07-26T00:19:34.582Z'
+              "
+            >
+              Source 2
+            </div>
+            <div
+              class="player-source"
+              @click="changeToWish"
+              v-if="
+                video.createdAt >= '2023-05-10T06:08:02.528+00:00' &&
+                video.createdAt <= '2023-07-26T00:19:34.582Z'
+              "
+            >
+              Source 3
+            </div>
+            <div
+              class="player-source"
+              @click="changeToVIP"
+              v-if="video.createdAt >= '2023-05-01T22:07:18.813+00:00'"
+            >
+              VIP Source
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="title">
+        <h1>
+          {{ video.name }} -
+          <NuxtLink
+            :to="'/all-categories/' + video.category.slug"
+            style="text-transform: capitalize; text-decoration: underline"
+            >{{ video.category.name }}</NuxtLink
+          >
+        </h1>
+        <div class="actions">
+          <div class="count" v-text="likesCount"></div>
+          <div class="favorites-wrapper" @click="like">
+            <IconsHeart v-if="!isLiked" />
+            <IconsHeartFull v-else />
+          </div>
+        </div>
+      </div>
+      <div class="actor">
+        <NuxtLink
+          :to="'/all-girls/' + video.actor.slug"
+          class="link"
+          :title="video.actor.name"
+        >
+          <img
+            :src="video.actor.thumbnail + '?width=80'"
+            :title="video.actor.name"
+            :alt="video.actor.name"
+          />
+          <div class="actor-info">
+            <div class="name">
+              {{ video.actor.name }}
+            </div>
+            <div class="views">Total videos: {{ video.actor.totalVideos }}</div>
+          </div>
+        </NuxtLink>
+        <div class="tags">
+          <Tag
+            v-for="(tag, index) in video.tags"
+            :tag-name="tag.name"
+            :tag-slug="tag.slug"
+          >
+          </Tag>
+        </div>
+        <div
+          class="premium-download"
+          v-if="video.createdAt > '2023-05-01T22:07:18.813Z'"
+        >
+          <n-button
+            :theme="$darkTheme"
+            :theme-overrides="$themeOverrides"
+            @click="downloadFile"
+            v-if="accountDetails.purchasedVideos.includes(video._id)"
+          >
+            VIP Download
+          </n-button>
+        </div>
+      </div>
+      <br />
+      <br />
+      <div class="snapshots" v-if="video.snapshots.length">
+        <nuxt-img
+          format="webp"
+          :src="snapshot"
+          v-for="(snapshot, index) in video.snapshots"
+          :alt="video.name + ' ' + (index + 1)"
+          :title="video.name + ' ' + (index + 1)"
+        />
+      </div>
+      <div class="video-information">
+        <h3 style="margin-bottom: 10px; font-weight: 600; font-size: 18px">
+          More Information:
+        </h3>
+        <div class="inormation-row">
+          Video added
+          <strong> {{ $timeAgo.format(new Date(video.createdAt)) }}</strong>
+        </div>
+        <div class="inormation-row">
+          The name of the BJ is
+          <strong>{{ video.actor.name }}</strong>
+        </div>
+        <div class="inormation-row">
+          The video was watched by
+          <strong> {{ video.views.views }}</strong> people and has been added to
+          the favorite list <strong>{{ video.likes.length }}</strong> times
+        </div>
+        <div class="inormation-row">
+          Duration <strong> {{ $timeFormat(video.duration) }}</strong>
+        </div>
+        <div class="inormation-row" v-if="video.actor.totalVideos > 3">
+          You can watch other
+          <strong>{{ video.actor.totalVideos }}</strong> videos of
+          <strong
+            ><NuxtLink :to="'/all-girls/' + video.actor.slug">
+              {{ video.actor.name }}</NuxtLink
+            ></strong
+          >
+          on SKBJ.tv
+        </div>
+      </div>
+      <client-only>
+        <h1 class="page-title" style="margin-top: 20px">More Videos</h1>
+        <div class="cards-wrapper" v-if="pendingRecommended2">
+          <VideoCardLoading
+            v-for="index in Array.from({ length: 10 }, (v, k) => k + 1)"
+            :key="index"
+          ></VideoCardLoading>
+        </div>
+        <div class="cards-wrapper" v-else>
+          <VideoCard
+            v-for="(video, index) in videosRecommended2"
+            :key="index"
+            :uploadID="video.uploadID"
+            :thumbnail="video.thumbnail"
+            :duration="video.duration"
+            :name="video.name"
+            :date="video.createdAt"
+            :actor="video.actor"
+            :category="video.category"
+            :views="video.views"
+            :likes="video.likes?.length"
+            :snapshots="video.snapshots"
+            :cost="video.cost"
             :isVIP="video.tags.includes('643adac05767bb0f8517fec8')"
           ></VideoCard>
         </div>
@@ -315,6 +665,7 @@
         :views="video.views"
         :likes="video.likes?.length"
         :snapshots="video.snapshots"
+        :cost="video.cost"
         :isVIP="video.tags.includes('643adac05767bb0f8517fec8')"
       ></VideoCard>
     </div>
@@ -325,6 +676,8 @@
 import { toast } from "vue3-toastify";
 import { useAccountInfo } from "~/store/accountInfo";
 import { storeToRefs } from "pinia";
+import crypto from 'crypto-js';
+
 // import DOMPurify from "dompurify";
 const headers = useRequestHeaders(["cookie"]);
 const router = useRouter();
@@ -343,7 +696,29 @@ const sourceSB = ref(true);
 const sourceHide = ref(false);
 const sourceWish = ref(false);
 const sourceVIP = ref(false);
+const purchaseClicked = ref(false);
 const likesCount = ref(0);
+
+const cookieValue = cookieVideoId.value || "";
+const cookieName = "cookieVideoId";
+const estimatedSize = (cookieName.length + cookieValue.length + 1) * 2; // +1 for the equals sign
+const secureVideoUrl = ref(null);
+
+
+const showAd = ref(true)
+
+const hideAd = () => {
+  showAd.value = false
+}
+
+async function deleteMany() {
+  await $fetch(`https://skbj.tv/api/videos/deleteMany`, {
+    method: "DELETE",
+    body: {
+      videoId: video.value._id,
+    },
+  });
+}
 
 const changeToSB = () => {
   sourceSB.value = true;
@@ -396,10 +771,32 @@ const changeToVIP = () => {
   }
 };
 
+async function purchaseVideo() {
+  await $fetch(`https://skbj.tv/api/users/purchaseVideo`, {
+    method: "POST",
+    body: {
+      userId: accountDetails.value._id,
+      videoId: video.value._id,
+      creditCost: video.value.cost,
+    },
+
+    async onResponse(res) {
+      await $fetch(`https://skbj.tv/api/users/getInfo`, {
+        server: false,
+        credentials: "include",
+
+        onResponse(res) {
+          accountInfoStore.updateAccountInfo(res.response._data.userDB);
+        },
+      });
+    },
+  });
+}
+
 // async function writeComment() {
 //   const sanitizedComment = DOMPurify.sanitize(formData.commentBody);
 
-//   await $fetch(`http://localhost:3030/api/comments/${video.value._id}`, {
+//   await $fetch(`https://skbj.tv/api/comments/${video.value._id}`, {
 //     method: "POST",
 //     body: {
 //       commentBody: sanitizedComment,
@@ -423,14 +820,13 @@ const like = async () => {
 
   isLiked.value = !isLiked.value;
 
-  console.log(isLiked.value);
   if (isLiked.value) {
     likesCount.value++;
   } else {
     likesCount.value--;
   }
 
-  fetch(`http://localhost:3030/api/videos/like/${video.value._id}`, {
+  fetch(`https://skbj.tv/api/videos/like/${video.value._id}`, {
     credentials: "include",
   });
 };
@@ -438,13 +834,13 @@ const like = async () => {
 const downloadFile = async () => {
   try {
     const blobName = video.value.fileName; // Replace with the actual video filename
-    const downloadUrl = `http://localhost:3030/api/videos/download/${encodeURIComponent(
+    const downloadUrl = `https://skbj.tv/api/videos/download/${encodeURIComponent(
       blobName
     )}`;
 
     // // Check if the file exists
     // const existsResponse = await fetch(
-    //   `http://localhost:3030/api/videos/fileExists/${encodeURIComponent(
+    //   `https://skbj.tv/api/videos/fileExists/${encodeURIComponent(
     //     blobName
     //   )}`
     // );
@@ -484,9 +880,8 @@ const downloadFile = async () => {
 
     if (
       new Date(video.value.createdAt) <
-        new Date("2023-05-01T22:07:18.813+00:00")
+      new Date("2023-05-01T22:07:18.813+00:00")
     ) {
-      console.error("File not found:", blobName);
       toast("VIP download not available for this video!", {
         theme: "dark",
         type: "error",
@@ -496,10 +891,6 @@ const downloadFile = async () => {
       });
       return;
     }
-    console.log(
-      new Date(video.value.createdAt) <
-        new Date("2023-05-01T22:07:18.813+00:00")
-    );
     // Create an anchor element and set its href to the download URL
     if (
       new Date(video.value.createdAt) <
@@ -516,9 +907,8 @@ const downloadFile = async () => {
         document.body.removeChild(link);
       }, 100);
     } else {
-      console.log("bunny");
       const link = document.createElement("a");
-      link.href = `https://skbjvid.b-cdn.net/videos/${video.value.fileName}`;
+      link.href =secureVideoUrl.value;
       link.download = blobName;
 
       // Set the target attribute to open the link in a new tab
@@ -537,13 +927,12 @@ const downloadFile = async () => {
 };
 
 const { pending, data: video } = await useFetch(
-  `http://localhost:3030/api/videos/${route.params.id}`,
+  `https://skbj.tv/api/videos/${route.params.id}`,
   {
     server: true,
     credentials: "include",
     headers,
     onResponse(res) {
-      console.log(res);
       if (res.response.status === 200) {
         title.value = res.response._data.name;
         actorName.value = res.response._data.actor.name;
@@ -555,6 +944,10 @@ const { pending, data: video } = await useFetch(
         isLiked.value = res.response._data.likes.includes(
           accountDetails.value._id
         );
+
+        if (estimatedSize > 5000) {
+          cookieVideoId.value = null;
+        }
 
         if (cookieVideoId?.value) {
           if (!cookieVideoId.value.includes(route.params.id)) {
@@ -574,7 +967,7 @@ const { pending, data: video } = await useFetch(
 );
 
 // setTimeout(async () => {
-//   await useLazyFetch(`http://localhost:3030/api/comments/${video.value._id}`, {
+//   await useLazyFetch(`https://skbj.tv/api/comments/${video.value._id}`, {
 //     onResponse(res) {
 //       comments.value = { ...res.response._data };
 //     },
@@ -642,7 +1035,7 @@ onServerPrefetch(() => {
             name: "Skbj.TV",
             logo: {
               "@type": "ImageObject",
-              url: "http://localhost:3030/images/skbjlogo.png", // Replace with the actual logo URL
+              url: "https://skbj.tv/images/skbjlogo.png", // Replace with the actual logo URL
               width: 633,
               height: 191,
             },
@@ -662,7 +1055,30 @@ onUpdated(() => {
   }
 });
 
+function generateSecureUrl() {
+  const path = `/videos/${video.value.fileName}`;
+  const expirationTime = Math.floor(Date.now() / 1000) + 3600; // 1 hour from now
+  const secret = '4048154d-7385-440a-bdb2-bbdda57c0619'; 
+
+  // Construct the base string to hash
+  const baseString = secret + path + expirationTime;
+  
+  // Generate the raw SHA256 hash
+  let tokenHash = crypto.SHA256(baseString);
+  
+  // Convert to Base64
+  tokenHash = crypto.enc.Base64.stringify(tokenHash);
+  
+  // Replace certain characters in the resulting Base64 string
+  tokenHash = tokenHash.replace('\n', '').replace('+', '-').replace('/', '_').replace('=', '');
+
+  // Construct the secure URL
+  return `https://skbjvid.b-cdn.net${path}?token=${tokenHash}&expires=${expirationTime}`;
+}
+
 onMounted(() => {
+  secureVideoUrl.value = generateSecureUrl();
+
   if (title.value) {
     useHead({
       title: `Watch ${actorName.value} BJ ${title.value} Korean BJ Video Online In High Quality - Skbj.TV`,
@@ -723,7 +1139,7 @@ onMounted(() => {
               name: "Skbj.TV",
               logo: {
                 "@type": "ImageObject",
-                url: "http://localhost:3030/images/skbjlogo.png", // Replace with the actual logo URL
+                url: "https://skbj.tv/images/skbjlogo.png", // Replace with the actual logo URL
                 width: 633,
                 height: 191,
               },
@@ -736,7 +1152,7 @@ onMounted(() => {
 });
 
 const { pending: pendingRecommended, data: videosRecommended } =
-  await useLazyFetch(`http://localhost:3030/api/videos/random`, {
+  await useLazyFetch(`https://skbj.tv/api/videos/random`, {
     onResponseError() {
       toast("There was an error! Click here to refresh the data!", {
         theme: "dark",
@@ -749,7 +1165,7 @@ const { pending: pendingRecommended, data: videosRecommended } =
     server: true,
   });
 const { pending: pendingRecommended2, data: videosRecommended2 } =
-  await useLazyFetch(`http://localhost:3030/api/videos/random`, {
+  await useLazyFetch(`https://skbj.tv/api/videos/random`, {
     onResponseError() {
       toast("There was an error! Click here to refresh the data!", {
         theme: "dark",
@@ -762,7 +1178,7 @@ const { pending: pendingRecommended2, data: videosRecommended2 } =
     server: false,
   });
 const { pending: pendingRecommended3, data: videosRecommended3 } =
-  await useLazyFetch(`http://localhost:3030/api/videos`, {
+  await useLazyFetch(`https://skbj.tv/api/videos`, {
     onResponseError() {
       toast("There was an error! Click here to refresh the data!", {
         theme: "dark",
@@ -777,6 +1193,36 @@ const { pending: pendingRecommended3, data: videosRecommended3 } =
 </script>
 
 <style lang="scss" scoped>
+.purchase-button-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #4caf50; /* A shade of green */
+  text-decoration: underline;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: bold; /* Bold text for emphasis */
+  outline: none;
+  transition: color 0.3s ease; /* Smooth transition for hover effect */
+}
+.red-btt {
+  color: red;
+  margin-left: 10px;
+  &:hover {
+    color: red !important;
+  }
+}
+
+.purchase-button-link:hover {
+  color: #388e3c; /* A darker shade of green for hover */
+  text-decoration: none; /* Remove underline on hover */
+}
+
+.purchase-button-link:focus {
+  outline: auto;
+}
+
 .snapshots {
   display: flex;
   align-items: center;
@@ -795,6 +1241,33 @@ const { pending: pendingRecommended3, data: videosRecommended3 } =
   display: flex;
   .main-video-wrapper {
     width: calc(100% - 324px);
+
+    .add-juicy {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+
+      .close {
+        cursor: pointer;
+        top: -31px;
+        right: 0;
+        position: absolute;
+        z-index: 10;
+        color: #fff;
+        background-color: #353535;
+        padding: 10px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        border: 1px solid #818181ab;
+      }
+    }
     .player-wrapper {
       position: relative;
       background-color: #272727;

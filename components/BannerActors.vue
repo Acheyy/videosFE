@@ -10,7 +10,7 @@ onMounted(() => {
 
   script.type = "application/javascript";
   script.dataset.idzone = "5007044";
-  script.src = "https://a.realsrv.com/nativeads-v2.js";
+  script.src = "https://a.magsrv.com/nativeads-v2.js";
 
   document.getElementById("nativeAdContainer").appendChild(script);
 });

@@ -22,6 +22,7 @@
       :views="video.views"
       :likes="video.likes?.length"
       :snapshots="video.snapshots"
+      :cost="video.cost"
       :isVIP="video.tags.includes('643adac05767bb0f8517fec8')"
     ></VideoCard>
   </div>
@@ -69,7 +70,7 @@ useHead({
 });
 
 const { pending, data: videos } = await useLazyFetch(
-  `http://localhost:3030/api/videos/getVideosByTag?tag=${route.params.categoryName}&limit=30`,
+  `https://skbj.tv/api/videos/getVideosByTag?tag=${route.params.categoryName}&limit=30`,
   {
     onResponseError() {
       toast("There was an error! Click here to refresh the data!", {

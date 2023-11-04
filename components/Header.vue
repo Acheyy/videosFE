@@ -15,7 +15,7 @@
         <IconsFreePremium></IconsFreePremium>
       </NuxtLink>
     </div>
-    <div class="center">
+    <div class="center" ref="centerDiv">
       <form style="position: relative" onsubmit="return false">
         <div class="search-container">
           <input
@@ -35,6 +35,7 @@
             dir="ltr"
             class="ytd-searchbox"
             style="outline: none"
+            ref="searchInputRef"
             @keyup="
               processChanges($event);
               if (isLetter($event.key)) {
@@ -47,9 +48,12 @@
         </div>
       </form>
       <button>
-        <div class="icon" @click="submitSearch()">
+        <div class="icon" @click="handleButtonClick">
           <IconsSearch></IconsSearch>
         </div>
+      </button>
+      <button ref="closeBtnRev" class="close-btn hide" @click="closeSearch()">
+        X
       </button>
     </div>
     <div class="end">
@@ -75,12 +79,15 @@ const sidebarStore = useSidebarStore();
 const searchStore = useSearchStore();
 const accountInfoStore = useAccountInfo();
 const { isAccountLoggedIn, accountDetails } = storeToRefs(accountInfoStore);
+const centerDiv = ref(null);
+const searchInputRef = ref(null);
+const closeBtnRev = ref(null);
 
 let searchInput = ref("");
 
 function isLetter(key) {
   return (
-    /^[a-zA-Z]$/.test(key) ||
+    /^[a-zA-Z0-9]$/.test(key) || // Added 0-9 for numbers
     key === "Backspace" ||
     key === " " ||
     key === "Enter"
@@ -88,7 +95,7 @@ function isLetter(key) {
 }
 
 if (token.value) {
-  await useLazyFetch(`http://localhost:3030/api/users/getInfo`, {
+  await useLazyFetch(`https://skbj.tv/api/users/getInfo`, {
     server: false,
     credentials: "include",
 
@@ -104,6 +111,25 @@ if (token.value) {
   });
 }
 
+setInterval(async () => {
+  if (token.value) {
+    await useLazyFetch(`https://skbj.tv/api/users/getInfo`, {
+      server: false,
+      credentials: "include",
+
+      onResponse(res) {
+        accountInfoStore.updateAccountInfo(res.response._data.userDB);
+        accountInfoStore.triggerAccountLogin(true);
+      },
+      onResponseError(err) {
+        if ((err.response._data.error = "Forbidden")) {
+          accountInfoStore.triggerAccountLogin(false);
+        }
+      },
+    });
+  }
+}, 200 * 1000);
+
 function debounce(func, timeout = 750) {
   let timer;
   return (...args) => {
@@ -114,20 +140,18 @@ function debounce(func, timeout = 750) {
   };
 }
 
-async function searchFunction(event) {
-  await fetch(
-    `http://localhost:3030/api/videos/search?searchText=${event.target.value}`
-  )
+async function searchFunction(text) {
+  await fetch(`https://skbj.tv/api/videos/search?searchText=${text}`)
     .then((response) => response.json())
     .then((data) => {
-      searchStore.triggerSearch(data, event.target.value);
+      searchStore.triggerSearch(data, text);
       searchStore.triggerSearching(false);
     });
 }
 
 const processChanges = debounce((event) => {
   if (isLetter(event.key)) {
-    searchFunction(event);
+    searchFunction(event.target.value);
   }
 });
 
@@ -136,7 +160,7 @@ const handleSearchClick = async (event) => {
     router.push({ path: `/search` });
     if (event.target.value.length) {
       await fetch(
-        `http://localhost:3030/api/videos/search?searchText=${
+        `https://skbj.tv/api/videos/search?searchText=${
           event.target.value.length ? event.target.value : " "
         }`
       )
@@ -152,7 +176,44 @@ const handleSearchClick = async (event) => {
   }
 };
 
+const closeSearch = () => {
+  closeBtnRev.value.classList.add("hide");
+  centerDiv.value.classList.remove("mobile-open");
+};
+
+const handleButtonClick = () => {
+  if (window.innerWidth < 660) {
+    if (centerDiv?.value?.classList.contains("mobile-open")) {
+      // If .mobile-open is already present, call submitSearch
+      submitSearch();
+    } else {
+      closeBtnRev.value.classList.remove("hide");
+      centerDiv?.value?.classList.add("mobile-open");
+      // Add event listener to the document to detect clicks outside the centerDiv
+      document.addEventListener("click", handleClickOutside, true);
+    }
+  } else {
+    submitSearch();
+  }
+};
+
+const handleClickOutside = (event) => {
+  // Check if the clicked element is not the button or any of its descendants
+  const buttonElement = document.querySelector(".icon");
+  if (
+    !centerDiv?.value?.contains(event.target) &&
+    !buttonElement?.contains(event.target)
+  ) {
+    closeBtnRev.value.classList.add("hide");
+    centerDiv.value.classList.remove("mobile-open");
+    // Remove the event listener once the mobile-open class is removed
+    document.removeEventListener("click", handleClickOutside, true);
+  }
+};
+
 const submitSearch = () => {
+  searchStore.triggerSearching(true);
+  searchFunction(searchInputRef.value.value);
   router.push({ path: `/search` });
 };
 </script>
@@ -167,10 +228,56 @@ const submitSearch = () => {
   z-index: 999;
   box-shadow: 0 0 3px red;
   background-color: #0f0f0f !important;
+  .hide {
+    display: none;
+  }
 
   @media only screen and (max-width: 660px) {
+    .close-btn {
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      background-color: #272727;
+      border-radius: 50% !important;
+      width: 40px !important;
+      border-color: #000;
+      margin-left: 6px;
+    }
     .center {
-      display: none;
+      transition: 0.5s ease-in-out;
+      form {
+        display: none;
+        transition: 0.5s ease-in-out;
+      }
+
+      button {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        transition: 0.5s ease-in-out;
+        .icon {
+          width: 18px;
+          height: 18px;
+        }
+      }
+    }
+
+    .mobile-open {
+      form {
+        display: flex;
+      }
+
+      button {
+        width: 64px;
+        height: 40px;
+        border-radius: 0 40px 40px 0;
+      }
+
+      position: absolute;
+      z-index: 999;
+      width: calc(100% - 40px);
+      background-color: #0f0f0f;
+      padding: 12px 20px;
     }
   }
 }
@@ -198,6 +305,12 @@ const submitSearch = () => {
   justify-content: space-between;
   padding: 0 16px;
   color: #fff;
+
+  @media only screen and (max-width: 660px) {
+    padding: 0;
+    margin-right: 10px;
+  }
+
   .logo {
     width: 100px;
     padding: 18px 14px 18px 16px;
@@ -247,7 +360,7 @@ const submitSearch = () => {
   button {
     border-radius: 0 40px 40px 0;
     border: 1px solid hsl(0, 0%, 18.82%);
-    background-color: hsla(0, 0%, 100%, 0.08);
+    background-color: #272727;
     cursor: pointer;
     height: 40px;
     width: 64px;

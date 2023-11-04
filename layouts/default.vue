@@ -6,14 +6,41 @@
     <div class="main-content" :class="{ full: !showSidebar }">
       <!-- <div class="notification-banner">
         <p>
-          There is an error with PayPal payments. The payments will not go
-          through. Working on fixing it as soon as possible!!
+          Yepyeppp - Limited Video 
         </p>
         <p>
-          페이팔 결제에 오류가 있습니다. 지불이 안 된다. 가능한 한 빨리 수리하는
-          작업!!
+          BJ모르님 - 제한된 비디오
         </p>
       </div> -->
+      <div class="notification-banner info" v-if="showBanner">
+        <div class="close-icon" @click="closeBanner">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </div>
+        <p>
+          <IconsAnnouncement class="animate-bounce"></IconsAnnouncement>
+          cher._e - Maid Service
+          <NuxtLink to="/special-sales">See more</NuxtLink>
+        </p>
+        <p>
+          <IconsAnnouncement class="hidden"></IconsAnnouncement>
+          BJ손밍 - 하녀 서비스
+          <NuxtLink to="/special-sales">더 보기 </NuxtLink>
+        </p>
+      </div>
+
       <Breadcrumb></Breadcrumb>
       <div>
         <slot></slot>
@@ -31,6 +58,12 @@ import { storeToRefs } from "pinia";
 const sidebarStore = useSidebarStore();
 
 const { showSidebar } = storeToRefs(sidebarStore);
+
+const showBanner = ref(true);
+
+const closeBanner = () => {
+  showBanner.value = false;
+};
 </script>
 
 <style scoped lang="scss">
@@ -55,6 +88,16 @@ const { showSidebar } = storeToRefs(sidebarStore);
   &.full {
     margin-left: 0 !important;
   }
+
+  @media only screen and (max-width: 660px) {
+    padding: 0;
+  }
+}
+.close-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
 }
 
 .notification-banner {
@@ -63,9 +106,53 @@ const { showSidebar } = storeToRefs(sidebarStore);
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 20px;
+  position: relative;
+
+  @media only screen and (max-width: 660px) {
+    margin: 10px;
+  }
+
   p {
     margin-top: 10px;
   }
+
+  &.info {
+    border-color: #ffeb00;
+    background-color: #3c3416;
+    padding: 14px 16px;
+
+    a {
+      margin-left: 10px;
+      font-weight: 600;
+    }
+
+    svg {
+      max-width: 18px;
+      margin-right: 8px;
+      margin-bottom: -5px;
+    }
+
+    .hidden {
+      opacity: 0;
+    }
+  }
+}
+
+@keyframes bounce {
+  0%,
+  to {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+
+  50% {
+    transform: none;
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite !important;
 }
 
 @media only screen and (max-width: 1500px) {

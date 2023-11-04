@@ -40,6 +40,13 @@
       <span>Most Liked</span>
     </NuxtLink>
 
+    <NuxtLink to="/tags/nude" class="link" @click="closeSidebarMobile()">
+      <div class="icon">
+        <IconsBoobs></IconsBoobs>
+      </div>
+      <span>Nude</span>
+    </NuxtLink>
+
     <NuxtLink to="/all-categories" class="link" @click="closeSidebarMobile()">
       <div class="icon">
         <IconsTag></IconsTag>
@@ -74,6 +81,16 @@
       </div>
       <span>Discord</span>
     </NuxtLink>
+    <NuxtLink
+      to="/special-sales"
+      class="link"
+      @click="closeSidebarMobile()"
+    >
+      <div class="icon">
+        <IconsAnnouncement></IconsAnnouncement>
+      </div>
+      <span>Special Sales</span>
+    </NuxtLink>
     <!-- <NuxtLink to="/all-tags" class="link" @click="closeSidebarMobile()">
       <div class="icon">
         <IconsTag></IconsTag>
@@ -96,6 +113,14 @@
       >
         VIP Expires:
         {{ $timeAgo.format(new Date(accountDetails?.premiumExpiry)) }}
+      </div>
+      <div
+      class="available-coins"
+        style="margin-top: 10px"
+        v-if="isAccountLoggedIn && accountDetails.isUserPremium"
+      >
+        Available Coins:
+        <IconsCoin></IconsCoin> {{ accountDetails.credit }} 
       </div>
     </client-only>
     <div class="sidebar-separator"></div>
@@ -134,6 +159,11 @@ function closeSidebarMobile() {
 </script>
 
 <style scoped lang="scss">
+.available-coins{
+  img {
+    max-width: 26px;
+  }
+}
 .sidebar-main-wrapper {
   display: flex;
   flex-direction: column;
@@ -152,6 +182,9 @@ function closeSidebarMobile() {
   transition-timing-function: ease-in-out;
   z-index: 9;
   background-color: #0f0f0f;
+  @media only screen and (max-width: 660px) {
+    padding: 10px;
+  }
   @media only screen and (max-width: 1500px) {
     &.mobile-class {
       display: none;
@@ -184,6 +217,11 @@ function closeSidebarMobile() {
     flex-direction: row;
     align-items: center;
     border-radius: 10px;
+
+    @media only screen and (max-width: 660px) {
+      padding: 8px 10px;
+      margin: 2px 0;
+    }
 
     img {
       max-width: 24px;

@@ -8,6 +8,8 @@
       <div class="right-side">
         <div>Username: {{ accountDetails.userName }}</div>
         <div>Email: {{ accountDetails.email }}</div>
+        <br />
+        <div>Coins: {{ accountDetails.credit }}</div>
         <div>Is Account VIP: {{ accountDetails.isUserPremium }}</div>
         <UpgradeToPremiumButton
           v-if="!accountDetails.isUserPremium"
@@ -36,6 +38,7 @@
           :views="video.views"
           :likes="video.likes?.length"
           :snapshots="video.snapshots"
+          :cost="video.cost"
           :isVIP="video.tags.includes('643adac05767bb0f8517fec8')"
 
         ></VideoCard>
@@ -69,6 +72,7 @@
           :views="video.views"
           :likes="video.likes?.length"
           :snapshots="video.snapshots"
+          :cost="video.cost"
           :isVIP="video.tags.includes('643adac05767bb0f8517fec8')"
 
         ></VideoCard>
@@ -107,7 +111,7 @@ const { accountDetails, isAccountLoggedIn } = storeToRefs(accountInfoStore);
 const headers = useRequestHeaders(["cookie"]);
 
 const { pending, data: videosHistory } = await useLazyFetch(
-  `http://localhost:3030/api/users/getUserHistory`,
+  `https://skbj.tv/api/users/getUserHistory`,
   {
     onResponseError() {
       toast("There was an error!", {
@@ -124,7 +128,7 @@ const { pending, data: videosHistory } = await useLazyFetch(
   }
 );
 const { pending: pendingLiked, data: videosLiked } = await useLazyFetch(
-  `http://localhost:3030/api/users/getUserLiked`,
+  `https://skbj.tv/api/users/getUserLiked`,
   {
     onResponseError() {
       toast("There was an error!", {

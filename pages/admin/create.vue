@@ -15,6 +15,13 @@
       :value="nameInput"
       @keyup="handleNameInput($event)"
     />
+    <input
+      id="price-input"
+      class="text-input margin"
+      type="text"
+      :value="priceInput"
+      @keyup="handlePriceInput($event)"
+    />
     Category:
     <div class="margin">
       <template v-for="(category, index) in categories" :key="index">
@@ -57,6 +64,9 @@
     Name:
     {{ nameInput }}
     <br />
+    Price:
+    {{ priceInput }}
+    <br />
     Category:
     {{ category }}
     <br />
@@ -79,6 +89,7 @@ const { isAccountLoggedIn, accountDetails } = storeToRefs(accountInfoStore);
 
 const files = ref([]);
 let nameInput = ref("");
+let priceInput = ref("");
 let category = ref("");
 let categoryId = ref("");
 let actor = ref("");
@@ -93,6 +104,10 @@ const handleFileSelection = (event) => {
 };
 const handleNameInput = (event) => {
   nameInput.value = event.target.value;
+  console.log(event.target.value);
+};
+const handlePriceInput = (event) => {
+  priceInput.value = event.target.value;
   console.log(event.target.value);
 };
 const handleCategorySelect = (event, ID) => {
@@ -152,6 +167,7 @@ async function submitVideo() {
   let formData = new FormData();
   console.log("tagIds.value", tagIds.value);
   formData.append("name", nameInput.value);
+  formData.append("price", priceInput.value);
   formData.append("category", categoryId.value);
   formData.append("tags[]", tagIds.value);
   formData.append("actor", actorId.value);
@@ -180,7 +196,7 @@ async function submitVideo() {
     );
   });
 
-  await $fetch(`http://localhost:3030/api/videos`, {
+  await $fetch(`https://skbj.tv/api/videos`, {
     method: "POST",
     body: formData,
     onResponse() {
@@ -195,11 +211,11 @@ async function submitVideo() {
   });
 }
 const { data: categories } = await useFetch(
-  `http://localhost:3030/api/categories `
+  `https://skbj.tv/api/categories `
 );
-const { data: tagsData } = await useFetch(`http://localhost:3030/api/tags `);
+const { data: tagsData } = await useFetch(`https://skbj.tv/api/tags `);
 const { data: actorsData } = await useFetch(
-  `http://localhost:3030/api/actors `
+  `https://skbj.tv/api/actors `
 );
 </script>
 

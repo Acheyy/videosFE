@@ -16,6 +16,21 @@
       Total videos: {{ actor?.totalVideos }}
     </h2>
 
+    <div
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+      "
+    >
+      Total Followers: {{ likesCount }}
+      <div class="add-to-favorite" @click="like">
+        <IconsFollow v-if="!isLiked" />
+        <IconsFollowWhite v-else />
+      </div>
+    </div>
+
     <div class="sort-wrapper" v-if="!pendingActor && actor?.totalVideos > 5">
       <div
         class="date-sort"
@@ -66,6 +81,7 @@
         :views="video.views"
         :likes="video.likes?.length"
         :snapshots="video.snapshots"
+        :cost="video.cost"
         :isVIP="video.tags.includes('643adac05767bb0f8517fec8')"
       ></VideoCard>
     </div>
@@ -82,6 +98,14 @@
 </template>
 
 <script setup>
+import { useAccountInfo } from "~/store/accountInfo";
+import { storeToRefs } from "pinia";
+import { toast } from "vue3-toastify";
+
+const accountInfoStore = useAccountInfo();
+
+const { isAccountLoggedIn, accountDetails } = storeToRefs(accountInfoStore);
+
 const route = useRoute();
 const router = useRouter();
 
@@ -89,17 +113,94 @@ const actorName = ref("");
 const actorThumb = ref("");
 const videoOrder = ref("date");
 const queryObject = ref({ ...router.currentRoute.value.query });
+const isLiked = ref(false);
+const likesCount = ref(0);
 
-const { pendingActor, data: actor } = await useLazyFetch(
-  `http://localhost:3030/api/actors/${route.params.actorName}`,
+const like = async () => {
+  if (!isAccountLoggedIn.value) {
+    toast("Please signin to access this feature", {
+      theme: "dark",
+      type: "error",
+      autoClose: true,
+      toastClassName: "custom-wrapper error",
+      closeOnClick: true,
+    });
+    return;
+  }
+
+  isLiked.value = !isLiked.value;
+
+  console.log(isLiked.value);
+  if (isLiked.value) {
+    likesCount.value++;
+  } else {
+    likesCount.value--;
+  }
+
+  try {
+    const response = await fetch(`https://skbj.tv/api/actors/like/${actor.value._id}`, {
+      credentials: "include",
+    });
+
+    // Check if the fetch was successful
+    if (response.ok) {
+      if(isLiked.value) {
+        toast("Thank you for following!", {
+        theme: "dark",
+        type: "success",
+        autoClose: true,
+        toastClassName: "custom-wrapper error", // You may want to change this class to something like "custom-wrapper success" to reflect the type of message.
+        closeOnClick: false,
+      });
+      } else {
+        toast("Successfully unfollowed!", {
+        theme: "dark",
+        type: "success",
+        autoClose: true,
+        toastClassName: "custom-wrapper error", // You may want to change this class to something like "custom-wrapper success" to reflect the type of message.
+        closeOnClick: false,
+      });
+      }
+
+    } else {
+      throw new Error('Failed to like actor');
+    }
+  } catch (error) {
+    toast("An error occurred while trying to follow", {
+      theme: "dark",
+      type: "error",
+      autoClose: true,
+      toastClassName: "custom-wrapper error",
+      closeOnClick: true,
+    });
+  }};
+
+const hasUpdatedOnce = ref(false);
+
+onUpdated(() => {
+  if (!hasUpdatedOnce.value) {
+    isLiked.value = actor.value.likes.includes(accountDetails.value._id);
+    likesCount.value = actor.value.likes.length;
+    hasUpdatedOnce.value = true;
+  }
+});
+
+const { pendingActor, data: actor } = await useFetch(
+  `https://skbj.tv/api/actors/${route.params.actorName}`,
   {
     async onResponse(res) {
       const word = res.response._data.name;
       const capitalized = word.charAt(0).toUpperCase() + word.slice(1);
       actorName.value = capitalized;
       actorThumb.value = res.response._data.thumbnail;
+      likesCount.value = res.response._data.likes.length;
+      console.log("res.response", res.response);
+      isLiked.value = res.response._data.likes.includes(
+        accountDetails.value._id
+      );
     },
     server: true,
+    
   }
 );
 
@@ -109,7 +210,7 @@ const {
   data: videos,
 } = await useLazyFetch(
   () =>
-    `http://localhost:3030/api/videos/videosByActor?actor=${route.params.actorName}&limit=30&orderBy=${videoOrder.value}&page=${router.currentRoute.value.query.page}`,
+    `https://skbj.tv/api/videos/videosByActor?actor=${route.params.actorName}&limit=30&orderBy=${videoOrder.value}&page=${router.currentRoute.value.query.page}`,
   {
     server: false,
   }
@@ -238,6 +339,24 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
+.add-to-favorite {
+  margin-left: 16px;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  padding: 4px;
+  margin-top: -10px;
+  transition-duration: 0.25s;
+  transition-timing-function: ease-in-out;
+
+  &:hover {
+    background-color: #272727;
+  }
+  svg {
+    fill: #fff;
+  }
+}
 .placeholrder-img {
   width: 400px;
   height: 400px;

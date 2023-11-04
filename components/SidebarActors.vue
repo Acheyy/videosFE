@@ -19,7 +19,7 @@ const sidebarStore = useSidebarStore();
 const { showSidebar } = storeToRefs(sidebarStore);
 
 const { pending, data: actorsData } = await useLazyFetch(
-  `http://localhost:3030/api/actors/get-featured-actors`,
+  `https://skbj.tv/api/actors/get-featured-actors`,
   {
     onResponseError() {
       toast("There was an error! Click here to refresh the data!", {
@@ -41,7 +41,7 @@ function closeSidebarMobile() {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .thumb-wrapper {
   max-width: 40px;
   max-height: 40px;

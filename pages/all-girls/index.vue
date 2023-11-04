@@ -82,7 +82,7 @@ useHead({
 });
 
 const { pending, data: actorsData } = await useLazyFetch(
-  `http://localhost:3030/api/actors`,
+  `https://skbj.tv/api/actors`,
   {
     onResponseError() {
       toast("There was an error! Click here to refresh the data!", {
@@ -104,8 +104,8 @@ const { pending, data: actorsData } = await useLazyFetch(
   flex-wrap: wrap;
   .card-wrapper {
     width: calc(16.666666% - 16px);
-    margin: 8px;
-    border-radius: 8px;
+    margin: 8px !important;
+    border-radius: 8px !important;
     overflow: hidden;
     .thumnail img {
       width: 100%;

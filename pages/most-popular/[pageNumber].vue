@@ -21,6 +21,7 @@
       :views="video.videoId.views"
       :likes="video.videoId.likes.length"
       :snapshots="video.videoId.snapshots"
+      :cost="video.cost"
       :isVIP="video.videoId.tags.includes('643adac05767bb0f8517fec8')"
     ></VideoCard>
   </div>
@@ -68,7 +69,7 @@ const route = useRoute();
 
 const videosPerPage = 100;
 const { pending, data: videos } = await useLazyFetch(
-  `http://localhost:3030/api/videos/most-popular?limit=30&page=${route.params.pageNumber}`,
+  `https://skbj.tv/api/videos/most-popular?limit=30&page=${route.params.pageNumber}`,
   {
     onResponseError() {
       toast("There was an error! Click here to refresh the data!", {

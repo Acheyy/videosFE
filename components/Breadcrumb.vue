@@ -71,7 +71,7 @@ const breadcrumbs = computed(() => {
 </script>
 
 
-<style scoped>
+<style scoped lang="scss">
 .breadcrumb {
   display: flex;
   flex-wrap: wrap;
@@ -82,6 +82,10 @@ const breadcrumbs = computed(() => {
   list-style: none;
   border-radius: 0.25rem;
   min-height: 16px;
+
+  @media only screen and (max-width: 660px) {
+    margin: 10px;
+  }
 }
 
 .breadcrumb-item {

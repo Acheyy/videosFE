@@ -20,6 +20,7 @@
       :views="video.views"
       :likes="video.likes?.length"
       :snapshots="video.snapshots"
+      :cost="video.cost"
       :isVIP="video.tags.includes('643adac05767bb0f8517fec8')"
     ></VideoCard>
   </div>
@@ -75,7 +76,7 @@ const {
   data: videos,
 } = await useLazyFetch(
   () =>
-    `http://localhost:3030/api/videos?limit=30&page=${router.currentRoute.value.query.page}`,
+    `https://skbj.tv/api/videos?limit=30&page=${router.currentRoute.value.query.page}`,
   {
     server: false,
     onResponseError() {

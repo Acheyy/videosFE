@@ -1,18 +1,17 @@
 <template>
-  <div>
-    <h1 class="page-title">
-      <span class="strong"> {{ route.params.categoryName }} </span> Videos
-    </h1>
+  <h1 class="page-title">Special Sales</h1>
+  <div style="min-height: 100vh">
     <div class="cards-wrapper" v-if="pending">
       <VideoCardLoading
         v-for="index in Array.from({ length: 30 }, (v, k) => k + 1)"
         :key="index"
       ></VideoCardLoading>
     </div>
-    <div class="cards-wrapper" v-else>
+    <div v-else class="cards-wrapper">
       <VideoCard
         v-for="(video, index) in videos.videos"
         :key="index"
+        :videoId="video._id"
         :uploadID="video.uploadID"
         :thumbnail="video.thumbnail"
         :duration="video.duration"
@@ -25,22 +24,34 @@
         :snapshots="video.snapshots"
         :cost="video.cost"
         :isVIP="video.tags.includes('643adac05767bb0f8517fec8')"
+        :accountDetails="accountDetails"
       ></VideoCard>
     </div>
-    <Pagination
-      v-if="!pending && +videos?.totalPages > 1"
-      :url="'/all-categories/' + route.params.categoryName + '/'"
-      :totalPages="+(+videos.totalPages).toFixed(0)"
-      :currentPage="1"
-    ></Pagination>
+    <div v-if="!pending">
+      <QueryPagination
+        v-if="+videos.totalPages > 1"
+        :totalPages="+(+videos.totalPages).toFixed(0)"
+        :currentPage="
+          router.currentRoute.value.query.page
+            ? +router.currentRoute.value.query.page
+            : 1
+        "
+      ></QueryPagination>
+    </div>
   </div>
 </template>
 
 <script setup>
-const route = useRoute();
+import { useAccountInfo } from "~/store/accountInfo";
+import { storeToRefs } from "pinia";
+const accountInfoStore = useAccountInfo();
+const { accountDetails } = storeToRefs(accountInfoStore);
+
+const router = useRouter();
 
 useHead({
-  title: `Watch ${route.params.categoryName} The Best Korean BJ Cam Girl Videos Online In High Quality - Skbj.TV`,
+  title:
+    "Watch Special Sales Videos The Best Korean BJ Cam Girl Videos Online In High Quality - Skbj.TV",
   meta: [
     { charset: "utf-8" },
     { name: "viewport", content: "width=device-width, initial-scale=1" },
@@ -70,8 +81,10 @@ useHead({
 });
 
 const { pending, data: videos } = await useLazyFetch(
-  `https://skbj.tv/api/videos/getVideosByCategory?category=${route.params.categoryName}&limit=30`,
+  () =>
+    `https://skbj.tv/api/videos/special?limit=30&page=${router.currentRoute.value.query.page}`,
   {
+    server: false,
     onResponseError() {
       toast("There was an error! Click here to refresh the data!", {
         theme: "dark",
@@ -81,7 +94,6 @@ const { pending, data: videos } = await useLazyFetch(
         closeOnClick: false,
       });
     },
-    server: false,
   }
 );
 </script>
@@ -90,17 +102,5 @@ const { pending, data: videos } = await useLazyFetch(
 .cards-wrapper {
   display: flex;
   flex-wrap: wrap;
-}
-.strong {
-  font-weight: 900;
-  text-transform: capitalize;
-}
-.image-wrapper {
-  max-width: 400px;
-  margin: 0 auto;
-  margin-bottom: 20px;
-  img {
-    width: 100%;
-  }
 }
 </style>

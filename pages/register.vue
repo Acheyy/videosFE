@@ -1,6 +1,6 @@
 <template>
   <div class="upload-wrapper" v-if="!isAccountLoggedIn">
-    userName
+    User name
     <n-input
       :theme="$darkTheme"
       :theme-overrides="$themeOverrides"
@@ -11,7 +11,7 @@
       placeholder="UserName"
       :status="v$.userName.$error ? 'error' : ''"
     />
-    email
+    Email
     <n-input
       :theme="$darkTheme"
       :theme-overrides="$themeOverrides"
@@ -22,7 +22,7 @@
       placeholder="Email"
       :status="v$.email.$error ? 'error' : ''"
     />
-    password
+    Password
     <n-input
       :theme="$darkTheme"
       :theme-overrides="$themeOverrides"
@@ -88,7 +88,7 @@ async function submitVideo() {
   v$.value.$validate();
   console.log(v$.value.userName.$error);
   if (!v$.value.$error) {
-    await $fetch(`http://localhost:3030/api/users`, {
+    await $fetch(`https://skbj.tv/api/users`, {
       method: "POST",
       body: {
         userName: sanitizeduserName.replace(/\s+/g, ''),
@@ -104,7 +104,7 @@ async function submitVideo() {
             toastClassName: "custom-wrapper error",
             closeOnClick: false,
           });
-          await $fetch(`http://localhost:3030/api/users/sendConfirmation`, {
+          await $fetch(`https://skbj.tv/api/users/sendConfirmation`, {
             method: "POST",
             body: { username: sanitizeduserName, to: sanitizedemail },
           });

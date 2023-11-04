@@ -46,7 +46,7 @@
             try {
               accountDetails.value.isUserPremium = true;
               const response = await fetch(
-                "http://localhost:3030/api/users/upgradeToPremium",
+                "https://skbj.tv/api/users/upgradeToPremium",
                 {
                   method: "POST",
                   headers: {

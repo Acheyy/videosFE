@@ -1,6 +1,9 @@
 <template>
   <!-- <Loading v-if="pending || pendingRandom || pendingFantrie || pendingTwitch"></Loading> -->
   <div>
+    <div class="cards-title">Weekly Top Liked:</div>
+    <SidebarActors4></SidebarActors4>
+
     <div class="cards-title">Most Recent:</div>
     <div class="cards-wrapper" v-if="pending">
       <VideoCardLoading
@@ -23,9 +26,17 @@
         :views="video.views"
         :likes="video.likes?.length"
         :snapshots="video.snapshots"
+        :cost="video.cost"
         :isVIP="video.tags.includes('643adac05767bb0f8517fec8')"
       ></VideoCard>
     </div>
+
+    <div class="cards-title margin-top">Top Viewed:</div>
+    <SidebarActors2></SidebarActors2>
+
+    <div class="cards-title margin-top">Top Liked Of All Time:</div>
+    <SidebarActors3></SidebarActors3>
+
     <div class="cards-title margin-top">Fantrie:</div>
     <div class="cards-wrapper" v-if="pendingFantrie">
       <VideoCardLoading
@@ -47,6 +58,7 @@
         :views="video.views"
         :likes="video.likes?.length"
         :snapshots="video.snapshots"
+        :cost="video.cost"
         :isVIP="video.tags.includes('643adac05767bb0f8517fec8')"
       ></VideoCard>
     </div>
@@ -70,7 +82,7 @@
         :category="video.category"
         :views="video.views"
         :likes="video.likes?.length"
-        :snapshots="video.snapshots"
+        :cost="video.cost"
         :isVIP="video.tags.includes('643adac05767bb0f8517fec8')"
       ></VideoCard>
     </div>
@@ -94,6 +106,7 @@
         :category="video.category"
         :views="video.views"
         :likes="video.likes?.length"
+        :cost="video.cost"
         :snapshots="video.snapshots"
         :isVIP="video.tags.includes('643adac05767bb0f8517fec8')"
       ></VideoCard>
@@ -132,7 +145,7 @@ useHead({
     {
       property: "og:image",
       hid: "og:image",
-      content: `http://localhost:3030/images/seo-image.jpg`,
+      content: `https://skbj.tv/images/seo-image.jpg`,
     },
     { property: "og:image:width", content: "1200" },
     { property: "og:image:height", content: "630" },
@@ -158,13 +171,13 @@ useHead({
     },
     {
       name: "twitter:image",
-      content: `http://localhost:3030/images/seo-image.jpg`,
+      content: `https://skbj.tv/images/seo-image.jpg`,
     },
   ],
 });
 
 const { pending, data: videos } = await useLazyFetch(
-  `http://localhost:3030/api/videos`,
+  `https://skbj.tv/api/videos`,
   {
     onResponseError() {
       toast("There was an error! Click here to refresh the data!", {
@@ -179,19 +192,19 @@ const { pending, data: videos } = await useLazyFetch(
   }
 );
 const { pending: pendingRandom, data: videosRandom } = await useLazyFetch(
-  `http://localhost:3030/api/videos/random`,
+  `https://skbj.tv/api/videos/random`,
   {
     server: true,
   }
 );
 const { pending: pendingFantrie, data: videosFantrie } = await useLazyFetch(
-  `http://localhost:3030/api/videos/getVideosByCategory?category=fantrie`,
+  `https://skbj.tv/api/videos/getVideosByCategory?category=fantrie`,
   {
     server: true,
   }
 );
 const { pending: pendingTwitch, data: videosTwitch } = await useLazyFetch(
-  `http://localhost:3030/api/videos/getVideosByCategory?category=twitch`,
+  `https://skbj.tv/api/videos/getVideosByCategory?category=twitch`,
   {
     server: true,
   }

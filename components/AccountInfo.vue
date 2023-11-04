@@ -1,9 +1,42 @@
 <template>
   <div v-if="isAccountLoading"><Loading2></Loading2></div>
-  <div v-else-if="!isAccountLoggedIn" class="non-signup-links">
+  <div v-else-if="!isAccountLoggedIn" style="display: flex; align-items: center">
     <client-only>
-      <NuxtLink to="/login" style="margin-right: 8px"> Login </NuxtLink>
-      <NuxtLink to="/register"> Register </NuxtLink>
+      <div>
+      </div>
+
+
+      <div class="upload-container" ref="uploadContainer">
+        <div class="avatar-wrapper" @click="toggleDropdownInside">
+          <div class="upload-icon">
+            <div class="icon"><IconsAvatar></IconsAvatar></div>
+          </div>
+        </div>
+        <DropdownMenu
+          :isVisible="dropdownVisible"
+          :userInfo="accountDetails"
+          :logout="logout"
+        >
+          <!-- Add your menu items here -->
+          <NuxtLink
+            to="/login"
+            class="nav-link"
+            @click="toggleDropdownInside"
+          >
+            Login
+          </NuxtLink>
+          <NuxtLink
+            to="/register"
+            class="nav-link"
+            @click="toggleDropdownInside"
+          >
+            Register
+          </NuxtLink>
+
+          <!-- <NuxtLink to="/user/profile" class="nav-link"> Liked </NuxtLink>
+        <NuxtLink to="/user/profile" class="nav-link"> History </NuxtLink> -->
+        </DropdownMenu>
+      </div>
     </client-only>
   </div>
   <div v-else style="display: flex; align-items: center">
@@ -31,6 +64,21 @@
           >
             Profile
           </NuxtLink>
+          <NuxtLink
+            to="/user/following"
+            class="nav-link"
+            @click="toggleDropdownInside"
+          >
+            Following
+          </NuxtLink>
+          <NuxtLink
+            to="/user/purchased"
+            class="nav-link"
+            @click="toggleDropdownInside"
+          >
+            Purchased
+          </NuxtLink>
+
           <!-- <NuxtLink to="/user/profile" class="nav-link"> Liked </NuxtLink>
         <NuxtLink to="/user/profile" class="nav-link"> History </NuxtLink> -->
         </DropdownMenu>
@@ -80,15 +128,26 @@ function logout() {
 </script>
 
 <style lang="scss" scoped>
-.non-signup-links {
-  display: flex;
+.icon {
+  width: 18px;
+  fill: #ffffff;
+  background-color: #272727;
+  padding: 8px;
+  border-radius: 50%;
+  transition: 0.25s ease-in-out;
+  cursor: pointer;
+
+  &:hover{
+    background-color: #707070;
+
+  }
 }
+
 .avatar-wrapper {
   max-width: 36px;
   max-height: 36px;
   border-radius: 50%;
   overflow: hidden;
-  border: 1px solid #ffffff;
 
   position: relative;
   display: inline-block;

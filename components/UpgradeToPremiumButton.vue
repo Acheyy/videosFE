@@ -30,7 +30,19 @@
         </p>
 
         <!-- <PayPal style="margin-top: 20px"></PayPal> -->
-        <a href="https://www.patreon.com/HenpaiSensei"
+        <a
+          :href="
+            'https://securekeybj.tech/send-checkout?customerId=' +
+            accountDetails._id +
+            '&product=plugingpt'
+          "
+          class="close-btn payment patreon"
+          target="_blank"
+        >
+          Card / Stripe
+        </a>
+        <a
+          href="https://www.patreon.com/HenpaiSensei"
           class="close-btn payment patreon"
           target="_blank"
         >
@@ -54,6 +66,11 @@
 </template>
 
 <script setup>
+import { useAccountInfo } from "~/store/accountInfo";
+import { storeToRefs } from "pinia";
+const accountInfoStore = useAccountInfo();
+const { accountDetails } = storeToRefs(accountInfoStore);
+
 const router = useRouter();
 const showModal = ref(false);
 </script>
@@ -91,7 +108,7 @@ const showModal = ref(false);
     text-align: left;
   }
 }
-.patreon{
+.patreon {
   max-width: calc(100% - 3rem);
 }
 .upgrade-btn,

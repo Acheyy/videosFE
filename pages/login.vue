@@ -1,7 +1,7 @@
 <template>
   <div class="upload-wrapper" v-if="!isAccountLoggedIn">
     <div>
-      userName
+      User nmae
       <n-input
         :theme="$darkTheme"
         :theme-overrides="$themeOverrides"
@@ -15,7 +15,7 @@
       <div v-if="v$.userName.$error">UserName minimum 4 characters</div>
     </div>
     <div>
-      password
+      Password
       <n-input
         :theme="$darkTheme"
         :theme-overrides="$themeOverrides"
@@ -79,7 +79,7 @@ async function login() {
   v$.value.$validate();
   console.log(v$.value.userName.$error);
   if (!v$.value.$error) {
-    await $fetch(`http://localhost:3030/api/users/login`, {
+    await $fetch(`https://skbj.tv/api/users/login`, {
       method: "POST",
       body: {
         userName: formData.userName,

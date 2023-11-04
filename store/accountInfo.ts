@@ -14,6 +14,8 @@ export const useAccountInfo = defineStore({
         isUserPremium: false,
         premiumExpiry: '',
         isAdmin: false,
+        credit: 0,
+        purchasedVideos: []
       },
     };
   },
@@ -33,6 +35,8 @@ export const useAccountInfo = defineStore({
         isUserPremium: user.isUserPremium,
         premiumExpiry: user.premiumExpiry,
         isAdmin: user.isAdmin,
+        credit: user.credit,
+        purchasedVideos: user.purchasedVideos
       };
     },
     async deleteAccountInfo() {
@@ -44,6 +48,8 @@ export const useAccountInfo = defineStore({
         isUserPremium: false,
         premiumExpiry: '',
         isAdmin: false,
+        credit: 0,
+        purchasedVideos: []
       };
     },
   },

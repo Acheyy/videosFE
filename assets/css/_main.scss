@@ -12,15 +12,33 @@ p,
 a,
 div,
 * {
-    font-family: "Roboto","Arial",sans-serif;
+  font-family: "Roboto", "Arial", sans-serif;
 }
 
 h1 {
   font-size: 24px;
 }
 
-.page-title {
+.page-title,
+.cards-title {
   margin-bottom: 20px;
+
+  @media only screen and (max-width: 660px) {
+    margin: 8px 10px 15px;
+    font-size: 20px !important;
+  }
+}
+
+.card-wrapper {
+  @media only screen and (max-width: 660px) {
+    margin: 0 !important;
+    margin-bottom: 12px !important;
+    border-radius: 0 !important;
+
+    .thumnail img {
+      border-radius: 0 !important;
+    }
+  }
 }
 
 .custom-wrapper {
@@ -33,4 +51,32 @@ h1 {
     rgba(18, 18, 18, 1) 0%,
     rgb(36 22 22) 100%
   );
+}
+
+@media only screen and (max-width: 660px) {
+  .actors-wrapper{
+    margin: 16px 0 !important;
+
+    .thumb-wrapper{
+      width: 76px !important;
+    }
+  }
+
+  .slide-container .single-actor{
+    height: 100px !important;
+    width: 90px !important;
+
+    .number-badge{
+      top: 52px !important;
+      left: 4px !important;
+    }
+  }
+
+  .slide-container .slide-btn{
+    top: 12px !important
+  }
+
+  .card-wrapper .details{
+    margin-left: 10px;
+  }
 }
