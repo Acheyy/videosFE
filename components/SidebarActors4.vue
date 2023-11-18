@@ -50,7 +50,7 @@ const sidebarStore = useSidebarStore();
 const { showSidebar } = storeToRefs(sidebarStore);
 
 const { pending, data: actorsData } = await useLazyFetch(
-  `https://skbj.tv/api/actors/get-most-liked-actors-weekly`,
+  `http://localhost:3030/api/actors/get-most-liked-actors-weekly`,
   {
     onResponseError() {
       toast("There was an error! Click here to refresh the data!", {

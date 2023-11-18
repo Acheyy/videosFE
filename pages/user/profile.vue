@@ -111,7 +111,7 @@ const { accountDetails, isAccountLoggedIn } = storeToRefs(accountInfoStore);
 const headers = useRequestHeaders(["cookie"]);
 
 const { pending, data: videosHistory } = await useLazyFetch(
-  `https://skbj.tv/api/users/getUserHistory`,
+  `http://localhost:3030/api/users/getUserHistory`,
   {
     onResponseError() {
       toast("There was an error!", {
@@ -128,7 +128,7 @@ const { pending, data: videosHistory } = await useLazyFetch(
   }
 );
 const { pending: pendingLiked, data: videosLiked } = await useLazyFetch(
-  `https://skbj.tv/api/users/getUserLiked`,
+  `http://localhost:3030/api/users/getUserLiked`,
   {
     onResponseError() {
       toast("There was an error!", {

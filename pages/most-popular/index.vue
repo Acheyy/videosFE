@@ -66,7 +66,7 @@ useHead({
 
 const videosPerPage = 100;
 const { pending, data: videos } = await useLazyFetch(
-  `https://skbj.tv/api/videos/most-popular?limit=30`,
+  `http://localhost:3030/api/videos/most-popular?limit=30`,
   {
     onResponseError() {
       toast("There was an error! Click here to refresh the data!", {

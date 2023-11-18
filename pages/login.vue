@@ -79,7 +79,7 @@ async function login() {
   v$.value.$validate();
   console.log(v$.value.userName.$error);
   if (!v$.value.$error) {
-    await $fetch(`https://skbj.tv/api/users/login`, {
+    await $fetch(`http://localhost:3030/api/users/login`, {
       method: "POST",
       body: {
         userName: formData.userName,

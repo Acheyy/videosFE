@@ -69,7 +69,7 @@ function triggerReply() {
 
 async function submitReply() {
   console.log(props.comment.videoId);
-  await $fetch(`https://skbj.tv/api/comments/${props.comment.videoId}`, {
+  await $fetch(`http://localhost:3030/api/comments/${props.comment.videoId}`, {
     method: "POST",
     body: {
       replyTo: props.comment._id,

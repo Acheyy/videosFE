@@ -88,7 +88,7 @@ async function submitVideo() {
   v$.value.$validate();
   console.log(v$.value.userName.$error);
   if (!v$.value.$error) {
-    await $fetch(`https://skbj.tv/api/users`, {
+    await $fetch(`http://localhost:3030/api/users`, {
       method: "POST",
       body: {
         userName: sanitizeduserName.replace(/\s+/g, ''),
@@ -104,7 +104,7 @@ async function submitVideo() {
             toastClassName: "custom-wrapper error",
             closeOnClick: false,
           });
-          await $fetch(`https://skbj.tv/api/users/sendConfirmation`, {
+          await $fetch(`http://localhost:3030/api/users/sendConfirmation`, {
             method: "POST",
             body: { username: sanitizeduserName, to: sanitizedemail },
           });

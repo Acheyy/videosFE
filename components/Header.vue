@@ -95,7 +95,7 @@ function isLetter(key) {
 }
 
 if (token.value) {
-  await useLazyFetch(`https://skbj.tv/api/users/getInfo`, {
+  await useLazyFetch(`http://localhost:3030/api/users/getInfo`, {
     server: false,
     credentials: "include",
 
@@ -113,7 +113,7 @@ if (token.value) {
 
 setInterval(async () => {
   if (token.value) {
-    await useLazyFetch(`https://skbj.tv/api/users/getInfo`, {
+    await useLazyFetch(`http://localhost:3030/api/users/getInfo`, {
       server: false,
       credentials: "include",
 
@@ -141,7 +141,7 @@ function debounce(func, timeout = 750) {
 }
 
 async function searchFunction(text) {
-  await fetch(`https://skbj.tv/api/videos/search?searchText=${text}`)
+  await fetch(`http://localhost:3030/api/videos/search?searchText=${text}`)
     .then((response) => response.json())
     .then((data) => {
       searchStore.triggerSearch(data, text);
@@ -160,7 +160,7 @@ const handleSearchClick = async (event) => {
     router.push({ path: `/search` });
     if (event.target.value.length) {
       await fetch(
-        `https://skbj.tv/api/videos/search?searchText=${
+        `http://localhost:3030/api/videos/search?searchText=${
           event.target.value.length ? event.target.value : " "
         }`
       )

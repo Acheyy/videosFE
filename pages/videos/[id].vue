@@ -354,7 +354,11 @@
                 </button>
                 <div v-else>
                   Are you sure?
-                  <button class="purchase-button-link" @click="purchaseVideo">
+                  <button
+                    class="purchase-button-link"
+                    @click="purchaseVideo"
+                    :disabled="isPurchasing"
+                  >
                     Yes
                   </button>
                   <button
@@ -676,7 +680,7 @@
 import { toast } from "vue3-toastify";
 import { useAccountInfo } from "~/store/accountInfo";
 import { storeToRefs } from "pinia";
-import crypto from 'crypto-js';
+import crypto from "crypto-js";
 
 // import DOMPurify from "dompurify";
 const headers = useRequestHeaders(["cookie"]);
@@ -696,6 +700,7 @@ const sourceSB = ref(true);
 const sourceHide = ref(false);
 const sourceWish = ref(false);
 const sourceVIP = ref(false);
+const isPurchasing  = ref(false);
 const purchaseClicked = ref(false);
 const likesCount = ref(0);
 
@@ -704,15 +709,14 @@ const cookieName = "cookieVideoId";
 const estimatedSize = (cookieName.length + cookieValue.length + 1) * 2; // +1 for the equals sign
 const secureVideoUrl = ref(null);
 
-
-const showAd = ref(true)
+const showAd = ref(true);
 
 const hideAd = () => {
-  showAd.value = false
-}
+  showAd.value = false;
+};
 
 async function deleteMany() {
-  await $fetch(`https://skbj.tv/api/videos/deleteMany`, {
+  await $fetch(`http://localhost:3030/api/videos/deleteMany`, {
     method: "DELETE",
     body: {
       videoId: video.value._id,
@@ -772,7 +776,10 @@ const changeToVIP = () => {
 };
 
 async function purchaseVideo() {
-  await $fetch(`https://skbj.tv/api/users/purchaseVideo`, {
+  if (isPurchasing.value) return; // Prevents multiple calls if already in progress
+  isPurchasing.value = true // Disable the button
+
+  await $fetch(`http://localhost:3030/api/users/purchaseVideo`, {
     method: "POST",
     body: {
       userId: accountDetails.value._id,
@@ -781,7 +788,7 @@ async function purchaseVideo() {
     },
 
     async onResponse(res) {
-      await $fetch(`https://skbj.tv/api/users/getInfo`, {
+      await $fetch(`http://localhost:3030/api/users/getInfo`, {
         server: false,
         credentials: "include",
 
@@ -796,7 +803,7 @@ async function purchaseVideo() {
 // async function writeComment() {
 //   const sanitizedComment = DOMPurify.sanitize(formData.commentBody);
 
-//   await $fetch(`https://skbj.tv/api/comments/${video.value._id}`, {
+//   await $fetch(`http://localhost:3030/api/comments/${video.value._id}`, {
 //     method: "POST",
 //     body: {
 //       commentBody: sanitizedComment,
@@ -826,7 +833,7 @@ const like = async () => {
     likesCount.value--;
   }
 
-  fetch(`https://skbj.tv/api/videos/like/${video.value._id}`, {
+  fetch(`http://localhost:3030/api/videos/like/${video.value._id}`, {
     credentials: "include",
   });
 };
@@ -834,13 +841,13 @@ const like = async () => {
 const downloadFile = async () => {
   try {
     const blobName = video.value.fileName; // Replace with the actual video filename
-    const downloadUrl = `https://skbj.tv/api/videos/download/${encodeURIComponent(
+    const downloadUrl = `http://localhost:3030/api/videos/download/${encodeURIComponent(
       blobName
     )}`;
 
     // // Check if the file exists
     // const existsResponse = await fetch(
-    //   `https://skbj.tv/api/videos/fileExists/${encodeURIComponent(
+    //   `http://localhost:3030/api/videos/fileExists/${encodeURIComponent(
     //     blobName
     //   )}`
     // );
@@ -908,7 +915,7 @@ const downloadFile = async () => {
       }, 100);
     } else {
       const link = document.createElement("a");
-      link.href =secureVideoUrl.value;
+      link.href = secureVideoUrl.value;
       link.download = blobName;
 
       // Set the target attribute to open the link in a new tab
@@ -927,7 +934,7 @@ const downloadFile = async () => {
 };
 
 const { pending, data: video } = await useFetch(
-  `https://skbj.tv/api/videos/${route.params.id}`,
+  `http://localhost:3030/api/videos/${route.params.id}`,
   {
     server: true,
     credentials: "include",
@@ -967,7 +974,7 @@ const { pending, data: video } = await useFetch(
 );
 
 // setTimeout(async () => {
-//   await useLazyFetch(`https://skbj.tv/api/comments/${video.value._id}`, {
+//   await useLazyFetch(`http://localhost:3030/api/comments/${video.value._id}`, {
 //     onResponse(res) {
 //       comments.value = { ...res.response._data };
 //     },
@@ -1035,7 +1042,7 @@ onServerPrefetch(() => {
             name: "Skbj.TV",
             logo: {
               "@type": "ImageObject",
-              url: "https://skbj.tv/images/skbjlogo.png", // Replace with the actual logo URL
+              url: "http://localhost:3030/images/skbjlogo.png", // Replace with the actual logo URL
               width: 633,
               height: 191,
             },
@@ -1058,19 +1065,23 @@ onUpdated(() => {
 function generateSecureUrl() {
   const path = `/videos/${video.value.fileName}`;
   const expirationTime = Math.floor(Date.now() / 1000) + 3600; // 1 hour from now
-  const secret = '4048154d-7385-440a-bdb2-bbdda57c0619'; 
+  const secret = "4048154d-7385-440a-bdb2-bbdda57c0619";
 
   // Construct the base string to hash
   const baseString = secret + path + expirationTime;
-  
+
   // Generate the raw SHA256 hash
   let tokenHash = crypto.SHA256(baseString);
-  
+
   // Convert to Base64
   tokenHash = crypto.enc.Base64.stringify(tokenHash);
-  
+
   // Replace certain characters in the resulting Base64 string
-  tokenHash = tokenHash.replace('\n', '').replace('+', '-').replace('/', '_').replace('=', '');
+  tokenHash = tokenHash
+    .replace("\n", "")
+    .replace("+", "-")
+    .replace("/", "_")
+    .replace("=", "");
 
   // Construct the secure URL
   return `https://skbjvid.b-cdn.net${path}?token=${tokenHash}&expires=${expirationTime}`;
@@ -1139,7 +1150,7 @@ onMounted(() => {
               name: "Skbj.TV",
               logo: {
                 "@type": "ImageObject",
-                url: "https://skbj.tv/images/skbjlogo.png", // Replace with the actual logo URL
+                url: "http://localhost:3030/images/skbjlogo.png", // Replace with the actual logo URL
                 width: 633,
                 height: 191,
               },
@@ -1152,7 +1163,7 @@ onMounted(() => {
 });
 
 const { pending: pendingRecommended, data: videosRecommended } =
-  await useLazyFetch(`https://skbj.tv/api/videos/random`, {
+  await useLazyFetch(`http://localhost:3030/api/videos/random`, {
     onResponseError() {
       toast("There was an error! Click here to refresh the data!", {
         theme: "dark",
@@ -1165,7 +1176,7 @@ const { pending: pendingRecommended, data: videosRecommended } =
     server: true,
   });
 const { pending: pendingRecommended2, data: videosRecommended2 } =
-  await useLazyFetch(`https://skbj.tv/api/videos/random`, {
+  await useLazyFetch(`http://localhost:3030/api/videos/random`, {
     onResponseError() {
       toast("There was an error! Click here to refresh the data!", {
         theme: "dark",
@@ -1178,7 +1189,7 @@ const { pending: pendingRecommended2, data: videosRecommended2 } =
     server: false,
   });
 const { pending: pendingRecommended3, data: videosRecommended3 } =
-  await useLazyFetch(`https://skbj.tv/api/videos`, {
+  await useLazyFetch(`http://localhost:3030/api/videos`, {
     onResponseError() {
       toast("There was an error! Click here to refresh the data!", {
         theme: "dark",

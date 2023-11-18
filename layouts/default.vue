@@ -31,12 +31,12 @@
         </div>
         <p>
           <IconsAnnouncement class="animate-bounce"></IconsAnnouncement>
-          cher._e - Maid Service
+          seo_ahn__ - Chair Sex
           <NuxtLink to="/special-sales">See more</NuxtLink>
         </p>
         <p>
           <IconsAnnouncement class="hidden"></IconsAnnouncement>
-          BJ손밍 - 하녀 서비스
+          BJ서안 - 체어섹스
           <NuxtLink to="/special-sales">더 보기 </NuxtLink>
         </p>
       </div>

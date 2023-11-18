@@ -76,7 +76,7 @@ const {
   data: videos,
 } = await useLazyFetch(
   () =>
-    `https://skbj.tv/api/videos?limit=30&page=${router.currentRoute.value.query.page}`,
+    `http://localhost:3030/api/videos?limit=30&page=${router.currentRoute.value.query.page}`,
   {
     server: false,
     onResponseError() {

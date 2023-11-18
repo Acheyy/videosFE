@@ -3,7 +3,7 @@
 //     onRequest: async (context) => {
 //       console.log(context);
 
-//       await globalThis.$fetch(`https://skbj.tv/api/users/refreshToken`, {
+//       await globalThis.$fetch(`http://localhost:3030/api/users/refreshToken`, {
 //         method: "POST",
 //         headers: {
 //           "Content-Type": "application/json",

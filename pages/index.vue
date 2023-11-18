@@ -145,7 +145,7 @@ useHead({
     {
       property: "og:image",
       hid: "og:image",
-      content: `https://skbj.tv/images/seo-image.jpg`,
+      content: `http://localhost:3030/images/seo-image.jpg`,
     },
     { property: "og:image:width", content: "1200" },
     { property: "og:image:height", content: "630" },
@@ -171,13 +171,13 @@ useHead({
     },
     {
       name: "twitter:image",
-      content: `https://skbj.tv/images/seo-image.jpg`,
+      content: `http://localhost:3030/images/seo-image.jpg`,
     },
   ],
 });
 
 const { pending, data: videos } = await useLazyFetch(
-  `https://skbj.tv/api/videos`,
+  `http://localhost:3030/api/videos`,
   {
     onResponseError() {
       toast("There was an error! Click here to refresh the data!", {
@@ -192,19 +192,19 @@ const { pending, data: videos } = await useLazyFetch(
   }
 );
 const { pending: pendingRandom, data: videosRandom } = await useLazyFetch(
-  `https://skbj.tv/api/videos/random`,
+  `http://localhost:3030/api/videos/random`,
   {
     server: true,
   }
 );
 const { pending: pendingFantrie, data: videosFantrie } = await useLazyFetch(
-  `https://skbj.tv/api/videos/getVideosByCategory?category=fantrie`,
+  `http://localhost:3030/api/videos/getVideosByCategory?category=fantrie`,
   {
     server: true,
   }
 );
 const { pending: pendingTwitch, data: videosTwitch } = await useLazyFetch(
-  `https://skbj.tv/api/videos/getVideosByCategory?category=twitch`,
+  `http://localhost:3030/api/videos/getVideosByCategory?category=twitch`,
   {
     server: true,
   }

@@ -63,7 +63,7 @@
     v$.value.$validate();
     console.log(v$.value.email.$error);
     if (!v$.value.$error) {
-      await $fetch(`https://skbj.tv/api/users/forgotPassword`, {
+      await $fetch(`http://localhost:3030/api/users/forgotPassword`, {
         method: "POST",
         body: {
             email: formData.email,

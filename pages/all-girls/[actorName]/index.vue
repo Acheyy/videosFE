@@ -138,7 +138,7 @@ const like = async () => {
   }
 
   try {
-    const response = await fetch(`https://skbj.tv/api/actors/like/${actor.value._id}`, {
+    const response = await fetch(`http://localhost:3030/api/actors/like/${actor.value._id}`, {
       credentials: "include",
     });
 
@@ -186,7 +186,7 @@ onUpdated(() => {
 });
 
 const { pendingActor, data: actor } = await useFetch(
-  `https://skbj.tv/api/actors/${route.params.actorName}`,
+  `http://localhost:3030/api/actors/${route.params.actorName}`,
   {
     async onResponse(res) {
       const word = res.response._data.name;
@@ -210,7 +210,7 @@ const {
   data: videos,
 } = await useLazyFetch(
   () =>
-    `https://skbj.tv/api/videos/videosByActor?actor=${route.params.actorName}&limit=30&orderBy=${videoOrder.value}&page=${router.currentRoute.value.query.page}`,
+    `http://localhost:3030/api/videos/videosByActor?actor=${route.params.actorName}&limit=30&orderBy=${videoOrder.value}&page=${router.currentRoute.value.query.page}`,
   {
     server: false,
   }

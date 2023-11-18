@@ -70,7 +70,7 @@ useHead({
 });
 
 const { pending, data: videos } = await useLazyFetch(
-  `https://skbj.tv/api/videos/getVideosByCategory?category=${route.params.categoryName}&limit=30`,
+  `http://localhost:3030/api/videos/getVideosByCategory?category=${route.params.categoryName}&limit=30`,
   {
     onResponseError() {
       toast("There was an error! Click here to refresh the data!", {

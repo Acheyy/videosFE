@@ -85,7 +85,7 @@
   });
   
   const { pending, data: actorsData } = await useLazyFetch(
-    `https://skbj.tv/api/actors/following`,
+    `http://localhost:3030/api/actors/following`,
     {
       onResponseError() {
         toast("There was an error! Click here to refresh the data!", {

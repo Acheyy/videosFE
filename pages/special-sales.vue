@@ -82,7 +82,7 @@ useHead({
 
 const { pending, data: videos } = await useLazyFetch(
   () =>
-    `https://skbj.tv/api/videos/special?limit=30&page=${router.currentRoute.value.query.page}`,
+    `http://localhost:3030/api/videos/special?limit=30&page=${router.currentRoute.value.query.page}`,
   {
     server: false,
     onResponseError() {
