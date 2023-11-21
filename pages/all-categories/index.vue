@@ -9,7 +9,7 @@
         alt="Afreeca TV"
       >
         <div class="thumnail">
-          <nuxt-img
+          <NuxtImg
             format="webp"
             src="https://skbj.b-cdn.net/random/afreecatv-new.webp"
             loading="lazy"
@@ -30,7 +30,7 @@
         alt="Patreon"
       >
         <div class="thumnail">
-          <nuxt-img
+          <NuxtImg
             format="webp"
             src="https://skbj.b-cdn.net/random/patreol-logo.webp"
             loading="lazy"
@@ -51,7 +51,7 @@
         alt="Fantrie"
       >
         <div class="thumnail">
-          <nuxt-img
+          <NuxtImg
             format="webp"
             src="https://skbj.b-cdn.net/random/fantrie.webp"
             loading="lazy"
@@ -72,7 +72,7 @@
         alt="Twitch"
       >
         <div class="thumnail">
-          <nuxt-img
+          <NuxtImg
             format="webp"
             src="https://skbj.b-cdn.net/random/twitch.webp"
             loading="lazy"
@@ -93,7 +93,7 @@
         alt="Flex"
       >
         <div class="thumnail">
-          <nuxt-img
+          <NuxtImg
             format="webp"
             src="https://skbj.b-cdn.net/random/flex.webp"
             loading="lazy"
@@ -114,7 +114,7 @@
         alt="Only Fans"
       >
         <div class="thumnail">
-          <nuxt-img
+          <NuxtImg
             format="webp"
             src="https://skbj.b-cdn.net/random/only-fans.webp"
             loading="lazy"
@@ -135,7 +135,7 @@
         alt="Panda"
       >
         <div class="thumnail">
-          <nuxt-img
+          <NuxtImg
             format="webp"
             src="https://skbj.b-cdn.net/random/panda.webp"
             loading="lazy"
@@ -156,7 +156,7 @@
         alt="VIP"
       >
         <div class="thumnail">
-          <nuxt-img
+          <NuxtImg
             format="webp"
             src="https://skbj.b-cdn.net/random/premium.webp"
             loading="lazy"
@@ -177,7 +177,7 @@
         alt="Unknown"
       >
         <div class="thumnail">
-          <nuxt-img
+          <NuxtImg
             format="webp"
             src="https://skbj.b-cdn.net/random/unknown.webp"
             loading="lazy"
@@ -201,7 +201,7 @@
         alt="Nude"
       >
         <div class="thumnail">
-          <nuxt-img
+          <NuxtImg
             format="webp"
             src="https://skbj.b-cdn.net/random/nude.webp"
             loading="lazy"
@@ -222,7 +222,7 @@
         alt="Showing Ass"
       >
         <div class="thumnail">
-          <nuxt-img
+          <NuxtImg
             format="webp"
             src="https://skbj.b-cdn.net/random/showing-ass.webp"
             loading="lazy"
@@ -243,7 +243,7 @@
         alt="Ahegao"
       >
         <div class="thumnail">
-          <nuxt-img
+          <NuxtImg
             format="webp"
             src="https://skbj.b-cdn.net/random/ahegao.webp"
             loading="lazy"
@@ -264,7 +264,7 @@
         alt="Twerk"
       >
         <div class="thumnail">
-          <nuxt-img
+          <NuxtImg
             format="webp"
             src="https://skbj.b-cdn.net/random/twerk.webp"
             loading="lazy"
@@ -285,7 +285,7 @@
         alt="Oil"
       >
         <div class="thumnail">
-          <nuxt-img
+          <NuxtImg
             format="webp"
             src="https://skbj.b-cdn.net/random/oil.webp"
             loading="lazy"
@@ -306,7 +306,7 @@
         alt="Stockings"
       >
         <div class="thumnail">
-          <nuxt-img
+          <NuxtImg
             format="webp"
             src="https://skbj.b-cdn.net/random/stockings.webp"
             loading="lazy"
@@ -327,7 +327,7 @@
         alt="Pantyhose"
       >
         <div class="thumnail">
-          <nuxt-img
+          <NuxtImg
             format="webp"
             src="https://skbj.b-cdn.net/random/pantyhose.webp"
             loading="lazy"
@@ -348,7 +348,7 @@
         alt="Blowjob"
       >
         <div class="thumnail">
-          <nuxt-img
+          <NuxtImg
             format="webp"
             src="https://skbj.b-cdn.net/random/blowjob.webp"
             loading="lazy"
@@ -369,7 +369,7 @@
         alt="POV"
       >
         <div class="thumnail">
-          <nuxt-img
+          <NuxtImg
             format="webp"
             src="https://skbj.b-cdn.net/random/pov.webp"
             loading="lazy"

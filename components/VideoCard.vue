@@ -10,7 +10,7 @@
     @touchend="stopThumbnailLoop"
   >
     <div class="thumnail">
-      <nuxt-img
+      <NuxtImg
         format="webp"
         :src="currentThumbnail + '?width=275'"
         loading="lazy"

@@ -9,10 +9,10 @@
   },
   "devDependencies": {
     "@element-plus/nuxt": "^1.0.3",
-    "@nuxt/image-edge": "^1.0.0-28020728.5df24eb",
+    "@nuxt/image": "^1.0.0",
     "fs-extra": "^11.1.1",
     "naive-ui": "^2.34.3",
-    "nuxt": "^3.4.1"
+    "nuxt": "^3.8.2"
   },
   "dependencies": {
     "@pinia/nuxt": "^0.4.6",

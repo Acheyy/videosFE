@@ -189,7 +189,7 @@
       <br />
       <br />
       <div class="snapshots" v-if="video.snapshots.length">
-        <nuxt-img
+        <NuxtImg
           format="webp"
           :src="snapshot"
           v-for="(snapshot, index) in video.snapshots"
@@ -526,7 +526,7 @@
       <br />
       <br />
       <div class="snapshots" v-if="video.snapshots.length">
-        <nuxt-img
+        <NuxtImg
           format="webp"
           :src="snapshot"
           v-for="(snapshot, index) in video.snapshots"

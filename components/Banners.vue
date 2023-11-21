@@ -13,7 +13,7 @@
         :src="randomImg"
         alt="kbj23030731_dbdms139_20221221"
         loading="lazy"
-        data-nuxt-img=""
+        data-NuxtImg=""
         title="kbj23030731_dbdms139_20221221"
       />
       <div data-v-dc30061e="" class="duration-wrapper">AD</div>
